@@ -1,0 +1,11 @@
+# Packages
+package-lock.json
+
+# Dependencies
+/node_modules
+
+# Build
+/dist
+
+# Readme
+README.md
