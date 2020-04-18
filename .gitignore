@@ -3,3 +3,12 @@
 
 # Build
 dist/
+
+# DB Data
+data/*
+
+# TS Buildinfo file
+tsconfig.tsbuildinfo
+
+# Logs
+npm-debug.log

@@ -1,7 +1,33 @@
-import express from "express";
+import express, { Application, json, Router } from "express";
+import RoutesInitializer from "./routes/RoutesInitializer";
+import { createConnection } from "typeorm";
 
-const app: express.Application = express();
+class NodeServer {
+    _server!: Application;
 
-app.listen(3000, function () {
-    console.log("App is listening on port 3000!");
-});
+    async start(): Promise<void> {
+        this.createServer();
+        this._server.use(json());
+        const routes: Router = await new RoutesInitializer().run();
+        this._server.use("/api", routes);
+        await createConnection({
+            type: "mysql",
+            host: "localhost",
+            port: 3306,
+            username: "user",
+            password: "user",
+            database: "db",
+            entities: [__dirname + "/entity/**/*.ts"],
+        });
+    }
+
+    createServer(): void {
+        this._server = express();
+        this._server.listen(3000);
+    }
+}
+
+const nodeServer = new NodeServer();
+(async (): Promise<void> => {
+    await nodeServer.start();
+})();

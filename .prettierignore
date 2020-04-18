@@ -7,5 +7,14 @@ package-lock.json
 # Build
 /dist
 
+# DB Data
+data/*
+
 # Readme
 README.md
+
+# TS Buildinfo file
+tsconfig.tsbuildinfo
+
+# Logs
+npm-debug.log
