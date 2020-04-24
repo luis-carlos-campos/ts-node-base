@@ -1,15 +1,29 @@
-import express, { Application, json, Router } from "express";
-import RoutesInitializer from "./routes/RoutesInitializer";
+import Express, { Application, json } from "express";
+import RoutesInitializer from "./initializer/RoutesInitializer";
+import MorganInitializer from "./initializer/MorganInitializer";
 import { createConnection } from "typeorm";
+import StartUpRunnable from "./interface/StartUpRunnable";
 
+// TODO: Error hanlding
+// TODO: 404
 class NodeServer {
-    _server!: Application;
+    server!: Application;
 
     async start(): Promise<void> {
         this.createServer();
-        this._server.use(json());
-        const routes: Router = await new RoutesInitializer().run();
-        this._server.use("/api", routes);
+
+        this.server.use(json());
+
+        const initializersToRun: StartUpRunnable[] = [
+            new MorganInitializer(),
+            new RoutesInitializer(),
+        ];
+
+        for (const initializer of initializersToRun) {
+            this.server = await initializer.run(this.server);
+        }
+
+        // TODO: Create connection initializer
         await createConnection({
             type: "mysql",
             host: "localhost",
@@ -22,8 +36,8 @@ class NodeServer {
     }
 
     createServer(): void {
-        this._server = express();
-        this._server.listen(3000);
+        this.server = Express();
+        this.server.listen(3000);
     }
 }
 

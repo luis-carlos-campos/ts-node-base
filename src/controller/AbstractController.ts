@@ -32,9 +32,7 @@ abstract class AbstractController<T, R extends AbstractRepository<T>> {
      * @returns List of <T> elements.
      */
     async findAll(): Promise<T[]> {
-        const elements = await this.repository.findAll();
-        console.log(elements);
-        return elements;
+        return await this.repository.findAll();
     }
 
     /**

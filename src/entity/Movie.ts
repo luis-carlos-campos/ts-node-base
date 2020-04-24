@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, BaseEntity } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 class Movie {
@@ -24,6 +24,8 @@ class Movie {
     })
     isPublished!: boolean;
 
+    // TODO: improve this any
+    // TODO: do we need constructor? can we extend base entity?
     constructor(attributes: any) {
         if (attributes) {
             this.name = attributes.name;

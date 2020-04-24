@@ -12,3 +12,4 @@ tsconfig.tsbuildinfo
 
 # Logs
 npm-debug.log
+logs/

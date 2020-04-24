@@ -1,3 +1,6 @@
+/**
+ * Enum for HTTP methods.
+ */
 enum HttpMethod {
     GET = "get",
     PATCH = "patch",
