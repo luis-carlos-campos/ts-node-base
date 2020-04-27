@@ -33,7 +33,7 @@ abstract class AbstractRoute<
         {
             httpMethod: HttpMethod.POST,
             methodName: "create",
-            path: "/:id",
+            path: "/",
         },
         {
             httpMethod: HttpMethod.DELETE,
@@ -57,12 +57,10 @@ abstract class AbstractRoute<
                     const ccc: any = this.controller;
                     // TODO: make sure it's a function, otherwise throw error.
                     await ccc[methodName](req, res, next);
+                    next();
                 } catch (e) {
-                    // TODO: Generic error handling
-                    console.log(e);
+                    next(e);
                 }
-                res.send("Ok!");
-                next();
             });
             this.logger.debug(
                 `Created route [${httpMethod.toUpperCase()}] ${path}`

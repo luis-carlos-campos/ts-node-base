@@ -5,7 +5,7 @@ import { Application } from "express";
  */
 interface StartUpRunnable {
     beforeRun?: void;
-    run(server: Express.Application): Promise<Application> | Application;
+    run(server: Application): Promise<Application> | Application;
     afterRun?: void;
 }
 

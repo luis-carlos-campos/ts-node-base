@@ -1,5 +1,6 @@
 import AbstractRepository from "../repository/AbstractRepository";
 import { Request } from "express";
+import EntityNotFoundError from "../errors/EntityNotFoundError";
 
 abstract class AbstractController<T, R extends AbstractRepository<T>> {
     protected repository: R;
@@ -46,9 +47,7 @@ abstract class AbstractController<T, R extends AbstractRepository<T>> {
         if (entityFound) {
             return entityFound;
         }
-        // TODO: Create Custom errors
-        // TODO: Create loggers
-        throw new Error(`Could not find entity with id ${id}`);
+        throw new EntityNotFoundError(id);
     }
 
     /**
@@ -60,7 +59,6 @@ abstract class AbstractController<T, R extends AbstractRepository<T>> {
         this._validateUpdate(req);
         const entity = await this.findByPk(req);
         // TODO: Handle valdiation
-        // TODO: Create loggers
         return await this.repository.save({ ...entity, ...req.body });
     }
 
@@ -71,12 +69,10 @@ abstract class AbstractController<T, R extends AbstractRepository<T>> {
      */
     async remove(req: Request): Promise<T> {
         const entity = await this.findByPk(req);
-        // TODO: Create loggers
         return await this.repository.remove(entity);
     }
 
     private _validateCreation(req: Request): void {
-        this._validateControllerProperties();
         this._validateRequest(
             req,
             this.requiredFieldsOnCreation,
@@ -84,31 +80,7 @@ abstract class AbstractController<T, R extends AbstractRepository<T>> {
         );
     }
 
-    /**
-     * Validates required properties.
-     */
-    private _validateControllerProperties(): void {
-        const isAllowedFieldsEmpty =
-            !this.allowedFieldsOnCreation ||
-            this.allowedFieldsOnCreation.length === 0;
-        if (isAllowedFieldsEmpty) {
-            throw new Error(
-                "Sub Controller must define allowedFieldsOnCreation"
-            );
-        }
-
-        const isRequiredFieldsEmpty =
-            !this.requiredFieldsOnCreation ||
-            this.requiredFieldsOnCreation.length === 0;
-        if (isAllowedFieldsEmpty || isRequiredFieldsEmpty) {
-            throw new Error(
-                "Sub Controller must define requiredFieldsOnCreation"
-            );
-        }
-    }
-
     private _validateUpdate(req: Request): void {
-        this._validateControllerProperties();
         this._validateRequest(
             req,
             this.requiredFieldsOnUpdate,
@@ -127,7 +99,6 @@ abstract class AbstractController<T, R extends AbstractRepository<T>> {
         requiredFields: string[],
         allowedFields: string[]
     ): void {
-        this._validateControllerProperties();
         const foundMissingRequiredField = requiredFields.find(
             (field) => !req.body[field]
         );
