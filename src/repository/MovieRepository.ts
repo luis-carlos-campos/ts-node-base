@@ -1,7 +1,7 @@
-import AbstractRepository from "./AbstractRepository";
+import { EntityRepository, Repository } from "typeorm";
 import Movie from "../entity/Movie";
 
-class MovieRepository extends AbstractRepository<Movie> {
-    protected type = Movie;
-}
+@EntityRepository(Movie)
+export class MovieRepository extends Repository<Movie> {}
+
 export default MovieRepository;

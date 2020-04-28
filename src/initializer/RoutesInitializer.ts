@@ -71,7 +71,11 @@ class RoutesInitializer implements Runnable {
                 logger.error(`Error Code: ${statusCode}`);
                 logger.error(`Error Name: ${err.name}`);
                 logger.error(`Error Message: ${err.message}`);
-                logger.error(`Error Stack\n ${err.stack}`);
+                logger.error(`Error Stack\n
+                "************************* START STACK *************************\n
+                ${err.stack}\n
+                *************************   END STACK  *************************
+                `);
                 res.status(statusCode).json(response);
                 next();
             }

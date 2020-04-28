@@ -1,16 +1,11 @@
 import AbstractController from "../controller/AbstractController";
-import AbstractRepository from "../repository/AbstractRepository";
 import express, { Router } from "express";
 import HttpMethod from "../enum/HttpMethod";
 import RouteMethod from "../type/RouteMethod";
 import { Logger } from "winston";
 import LoggerService from "../util/LoggerUtil";
 
-abstract class AbstractRoute<
-    T,
-    R extends AbstractRepository<T>,
-    C extends AbstractController<T, R>
-> {
+abstract class AbstractRoute<T, C extends AbstractController<T>> {
     protected controller: C;
     protected logger: Logger = LoggerService.getLogger("AbstractRoute");
     protected router: Router;

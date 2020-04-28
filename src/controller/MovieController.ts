@@ -1,8 +1,7 @@
 import AbstractController from "./AbstractController";
-import MovieRepository from "../repository/MovieRepository";
 import Movie from "../entity/Movie";
 
-class MovieController extends AbstractController<Movie, MovieRepository> {
+class MovieController extends AbstractController<Movie> {
     // Overwriting required properties
     protected allowedFieldsOnCreation: [string, ...string[]];
     protected allowedFieldsOnUpdate: [string, ...string[]];
@@ -11,7 +10,7 @@ class MovieController extends AbstractController<Movie, MovieRepository> {
     protected requiredFieldsOnUpdate: [string, ...string[]];
 
     constructor() {
-        super(MovieRepository);
+        super();
 
         // Defining which properties are requried for creation/update.
         // They could've been initialized directly on property definition as well.

@@ -1,10 +1,13 @@
-import AbstractRepository from "../repository/AbstractRepository";
 import { Request } from "express";
+import {
+    Repository,
+    Transaction,
+    EntityManager,
+    TransactionManager,
+} from "typeorm";
 import EntityNotFoundError from "../errors/EntityNotFoundError";
 
-abstract class AbstractController<T, R extends AbstractRepository<T>> {
-    protected repository: R;
-
+abstract class AbstractController<T> {
     // Properties that must be overwritten by Sub class.
     protected abstract allowedFieldsOnCreation: [string, ...string[]];
     protected abstract allowedFieldsOnUpdate: [string, ...string[]];
@@ -12,28 +15,31 @@ abstract class AbstractController<T, R extends AbstractRepository<T>> {
     protected abstract requiredFieldsOnCreation: [string, ...string[]];
     protected abstract requiredFieldsOnUpdate: [string, ...string[]];
 
-    protected constructor(repository: new () => R) {
-        this.repository = new repository();
-    }
-
     /**
      * Create a <T> element.
      * @param req: express.Request.
      * @returns Created <T> element.
      */
-    async create(req: Request): Promise<T> {
+    @Transaction()
+    async create(
+        req: Request,
+        @TransactionManager() manager: EntityManager
+    ): Promise<T> {
         this._validateCreation(req);
         // TODO: Handle valdiation
         // TODO: Create loggers
-        return await this.repository.save(new this.entity(req.body));
+        const repository: Repository<T> = manager.getRepository(this.entity);
+        return await repository.save(new this.entity(req.body));
     }
 
     /**
      * Finds all T elements.
      * @returns List of <T> elements.
      */
-    async findAll(): Promise<T[]> {
-        return await this.repository.findAll();
+    @Transaction()
+    async findAll(@TransactionManager() manager: EntityManager): Promise<T[]> {
+        const repository: Repository<T> = manager.getRepository(this.entity);
+        return await repository.find();
     }
 
     /**
@@ -41,9 +47,14 @@ abstract class AbstractController<T, R extends AbstractRepository<T>> {
      * @param req: express.Request
      * @returns <T> element.
      */
-    async findByPk(req: Request): Promise<T> {
+    @Transaction()
+    async findByPk(
+        req: Request,
+        @TransactionManager() manager: EntityManager
+    ): Promise<T> {
         const id = req.params.id;
-        const entityFound: T | undefined = await this.repository.findByPk(id);
+        const repository: Repository<T> = manager.getRepository(this.entity);
+        const entityFound: T | undefined = await repository.findOne(id);
         if (entityFound) {
             return entityFound;
         }
@@ -55,11 +66,16 @@ abstract class AbstractController<T, R extends AbstractRepository<T>> {
      * @param req: express.Request.
      * @returns Updated <T> element.
      */
-    async save(req: Request): Promise<T> {
+    @Transaction()
+    async save(
+        req: Request,
+        @TransactionManager() manager: EntityManager
+    ): Promise<T> {
         this._validateUpdate(req);
-        const entity = await this.findByPk(req);
+        const entity = await this.findByPk(req, manager);
         // TODO: Handle valdiation
-        return await this.repository.save({ ...entity, ...req.body });
+        const repository: Repository<T> = manager.getRepository(this.entity);
+        return await repository.save({ ...entity, ...req.body });
     }
 
     /**
@@ -67,11 +83,20 @@ abstract class AbstractController<T, R extends AbstractRepository<T>> {
      * @param req: express.Request.
      * @returns Removed <T> element.
      */
-    async remove(req: Request): Promise<T> {
-        const entity = await this.findByPk(req);
-        return await this.repository.remove(entity);
+    @Transaction()
+    async remove(
+        req: Request,
+        @TransactionManager() manager: EntityManager
+    ): Promise<T> {
+        const entity = await this.findByPk(req, manager);
+        const repository: Repository<T> = manager.getRepository(this.entity);
+        return await repository.remove(entity);
     }
 
+    /**
+     * Validation to be run before creation.
+     * @param req: express.Request.
+     */
     private _validateCreation(req: Request): void {
         this._validateRequest(
             req,
@@ -80,6 +105,10 @@ abstract class AbstractController<T, R extends AbstractRepository<T>> {
         );
     }
 
+    /**
+     * Validation to be run before update.
+     * @param req: express.Request.
+     */
     private _validateUpdate(req: Request): void {
         this._validateRequest(
             req,
@@ -117,4 +146,5 @@ abstract class AbstractController<T, R extends AbstractRepository<T>> {
         }
     }
 }
+
 export default AbstractController;
