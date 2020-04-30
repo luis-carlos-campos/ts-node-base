@@ -1,12 +1,8 @@
-import { Request } from "express";
-import {
-    Repository,
-    Transaction,
-    EntityManager,
-    TransactionManager,
-} from "typeorm";
+import { Request, Response, NextFunction } from "express";
+import { Repository, EntityManager } from "typeorm";
 import EntityNotFoundError from "../errors/EntityNotFoundError";
 
+// sucrase ???
 abstract class AbstractController<T> {
     // Properties that must be overwritten by Sub class.
     protected abstract allowedFieldsOnCreation: [string, ...string[]];
@@ -20,10 +16,11 @@ abstract class AbstractController<T> {
      * @param req: express.Request.
      * @returns Created <T> element.
      */
-    @Transaction()
     async create(
         req: Request,
-        @TransactionManager() manager: EntityManager
+        _res: Response,
+        _next: NextFunction,
+        manager: EntityManager
     ): Promise<T> {
         this._validateCreation(req);
         // TODO: Handle valdiation
@@ -36,8 +33,12 @@ abstract class AbstractController<T> {
      * Finds all T elements.
      * @returns List of <T> elements.
      */
-    @Transaction()
-    async findAll(@TransactionManager() manager: EntityManager): Promise<T[]> {
+    async findAll(
+        _req: Request,
+        _res: Response,
+        _next: NextFunction,
+        manager: EntityManager
+    ): Promise<T[]> {
         const repository: Repository<T> = manager.getRepository(this.entity);
         return await repository.find();
     }
@@ -47,10 +48,11 @@ abstract class AbstractController<T> {
      * @param req: express.Request
      * @returns <T> element.
      */
-    @Transaction()
     async findByPk(
         req: Request,
-        @TransactionManager() manager: EntityManager
+        _res: Response,
+        _next: NextFunction,
+        manager: EntityManager
     ): Promise<T> {
         const id = req.params.id;
         const repository: Repository<T> = manager.getRepository(this.entity);
@@ -66,13 +68,14 @@ abstract class AbstractController<T> {
      * @param req: express.Request.
      * @returns Updated <T> element.
      */
-    @Transaction()
     async save(
         req: Request,
-        @TransactionManager() manager: EntityManager
+        res: Response,
+        next: NextFunction,
+        manager: EntityManager
     ): Promise<T> {
         this._validateUpdate(req);
-        const entity = await this.findByPk(req, manager);
+        const entity = await this.findByPk(req, res, next, manager);
         // TODO: Handle valdiation
         const repository: Repository<T> = manager.getRepository(this.entity);
         return await repository.save({ ...entity, ...req.body });
@@ -83,12 +86,13 @@ abstract class AbstractController<T> {
      * @param req: express.Request.
      * @returns Removed <T> element.
      */
-    @Transaction()
     async remove(
         req: Request,
-        @TransactionManager() manager: EntityManager
+        res: Response,
+        next: NextFunction,
+        manager: EntityManager
     ): Promise<T> {
-        const entity = await this.findByPk(req, manager);
+        const entity = await this.findByPk(req, res, next, manager);
         const repository: Repository<T> = manager.getRepository(this.entity);
         return await repository.remove(entity);
     }

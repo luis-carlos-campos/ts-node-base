@@ -4,12 +4,11 @@ import HttpMethod from "../enum/HttpMethod";
 import RouteMethod from "../type/RouteMethod";
 import { Logger } from "winston";
 import LoggerService from "../util/LoggerUtil";
+import { getConnection } from "typeorm";
+import NotImplementedError from "../errors/NotImplementedError";
 
 abstract class AbstractRoute<T, C extends AbstractController<T>> {
-    protected controller: C;
-    protected logger: Logger = LoggerService.getLogger("AbstractRoute");
-    protected router: Router;
-    protected allowedMethods: RouteMethod[] = [
+    private allowedRouteMethods: RouteMethod[] = [
         {
             httpMethod: HttpMethod.GET,
             methodName: "findAll",
@@ -36,25 +35,57 @@ abstract class AbstractRoute<T, C extends AbstractController<T>> {
             path: "/:id",
         },
     ];
+    protected controller: C;
+    protected logger: Logger = LoggerService.getLogger("AbstractRoute");
+    protected router: Router;
 
-    constructor(controller: new () => C) {
+    constructor(controller: new () => C, allowedRouteMethods?: RouteMethod[]) {
+        if (allowedRouteMethods) {
+            this.allowedRouteMethods = allowedRouteMethods;
+        }
         this.controller = new controller();
         this.router = express.Router({ mergeParams: true });
         this.configureRouter();
     }
 
     configureRouter(): void {
-        this.allowedMethods.forEach(({ httpMethod, methodName, path }) => {
+        this.allowedRouteMethods.forEach(({ httpMethod, methodName, path }) => {
             this.router[httpMethod](path, async (req, res, next) => {
                 // TODO: Handle response
+                // Getting a connection and create a new query runner
+                const connection = getConnection();
+                const queryRunner = connection.createQueryRunner();
+
+                // Establishing real database connection using our new query runner
+                await queryRunner.connect();
+                // Opening transaction
+                await queryRunner.startTransaction();
+
                 try {
-                    // TODO: Remove this any
-                    const ccc: any = this.controller;
-                    // TODO: make sure it's a function, otherwise throw error.
-                    await ccc[methodName](req, res, next);
+                    // We can not tell which methods this controller so
+                    // eslint-disable-next-line
+                    const controller: any = this.controller;
+                    const methodToBeCalled: unknown = controller[methodName];
+                    if (
+                        !methodToBeCalled ||
+                        typeof methodToBeCalled !== "function"
+                    ) {
+                        throw new NotImplementedError(
+                            `Method ${methodName} was not implemented in controller class`
+                        );
+                    }
+                    await methodToBeCalled(req, res, next, queryRunner.manager);
+
+                    // Commiting transaction
+                    await queryRunner.commitTransaction();
                     next();
                 } catch (e) {
+                    // Rolling back changes
+                    await queryRunner.rollbackTransaction();
                     next(e);
+                } finally {
+                    // Releasing connection.
+                    await queryRunner.release();
                 }
             });
             this.logger.debug(

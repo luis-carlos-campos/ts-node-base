@@ -22,17 +22,6 @@ class NodeServer {
         for (const initializer of initializersToRun) {
             this.server = await initializer.run(this.server);
         }
-
-        // TODO: Create connection initializer
-        await createConnection({
-            type: "mysql",
-            host: "localhost",
-            port: 3306,
-            username: "user",
-            password: "user",
-            database: "db",
-            entities: [__dirname + "/entity/**/*.ts"],
-        });
     }
 
     createServer(): void {
