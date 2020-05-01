@@ -1,4 +1,5 @@
 import Express, { Application, json } from "express";
+import Compression from "compression";
 import DatabaseInitializer from "./initializer/DatabaseInitializer";
 import RoutesInitializer from "./initializer/RoutesInitializer";
 import MorganInitializer from "./initializer/MorganInitializer";
@@ -14,6 +15,7 @@ class NodeServer {
         this.createServer();
 
         this.server.use(json());
+        this.server.use(Compression());
 
         const initializersToRun: StartUpRunnable[] = [
             new MorganInitializer(),

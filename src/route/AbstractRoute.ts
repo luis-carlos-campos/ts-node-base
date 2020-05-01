@@ -97,7 +97,7 @@ abstract class AbstractRoute<T, RT, C extends AbstractController<T, RT>> {
                                 self:
                                     req.protocol +
                                     "://" +
-                                    req.host +
+                                    req.hostname +
                                     req.originalUrl,
                             },
                             data: response,
