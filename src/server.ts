@@ -1,11 +1,12 @@
 import Express, { Application, json } from "express";
+import DatabaseInitializer from "./initializer/DatabaseInitializer";
 import RoutesInitializer from "./initializer/RoutesInitializer";
 import MorganInitializer from "./initializer/MorganInitializer";
-import { createConnection } from "typeorm";
 import StartUpRunnable from "./interface/StartUpRunnable";
 
 // TODO: Error hanlding
 // TODO: 404
+// TODO: DB Migrations
 class NodeServer {
     server!: Application;
 
@@ -16,6 +17,7 @@ class NodeServer {
 
         const initializersToRun: StartUpRunnable[] = [
             new MorganInitializer(),
+            new DatabaseInitializer(),
             new RoutesInitializer(),
         ];
 

@@ -1,4 +1,5 @@
 import HttpMethod from "../enum/HttpMethod";
+import HttpStatusCode from "../enum/HttpStatusCode";
 
 /**
  * This type describe the relationship between a given route path and its expected method in a controller.
@@ -10,6 +11,8 @@ type RouteMethod = {
     methodName: string;
     // URL path (i.e. "/" or "/:id")
     path: string;
+    // Default status code for request
+    standardCode: HttpStatusCode;
 };
 
 export default RouteMethod;

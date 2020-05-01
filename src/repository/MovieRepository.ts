@@ -1,7 +1,7 @@
 import { EntityRepository, Repository } from "typeorm";
-import Movie from "../entity/Movie";
+import Project from "../entity/Project";
 
-@EntityRepository(Movie)
-export class MovieRepository extends Repository<Movie> {}
+@EntityRepository(Project)
+export class ProjectRepository extends Repository<Project> {}
 
-export default MovieRepository;
+export default ProjectRepository;

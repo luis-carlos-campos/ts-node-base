@@ -1,12 +1,12 @@
-import LoggerConfig from "./LoggerConfigFileOptions";
+import LoggerConfigFileOptions from "./LoggerConfigFileOptions";
 
 /**
  * Type definition for LoggerConfigFile
  */
 type LoggerConfigFile = {
-    development: LoggerConfig;
-    test: LoggerConfig;
-    production: LoggerConfig;
+    development: LoggerConfigFileOptions;
+    test: LoggerConfigFileOptions;
+    production: LoggerConfigFileOptions;
 };
 
 export default LoggerConfigFile;

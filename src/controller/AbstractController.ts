@@ -1,9 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { Repository, EntityManager } from "typeorm";
 import EntityNotFoundError from "../errors/EntityNotFoundError";
+import { validate } from "class-validator";
+import MultipleValidationError from "../errors/MultipleValidationError";
 
 // sucrase ???
-abstract class AbstractController<T> {
+abstract class AbstractController<T, RT> {
     // Properties that must be overwritten by Sub class.
     protected abstract allowedFieldsOnCreation: [string, ...string[]];
     protected abstract allowedFieldsOnUpdate: [string, ...string[]];
@@ -14,6 +16,9 @@ abstract class AbstractController<T> {
     /**
      * Create a <T> element.
      * @param req: express.Request.
+     * @param res: express.Response.
+     * @param next: express.NextFunction
+     * @param manager: TypeORM transactional entity manager
      * @returns Created <T> element.
      */
     async create(
@@ -21,16 +26,25 @@ abstract class AbstractController<T> {
         _res: Response,
         _next: NextFunction,
         manager: EntityManager
-    ): Promise<T> {
+    ): Promise<RT> {
         this._validateCreation(req);
-        // TODO: Handle valdiation
         // TODO: Create loggers
+        let newEntity = new this.entity(req.body);
+        const errors = await validate(newEntity);
+        if (errors.length) {
+            throw new MultipleValidationError(errors);
+        }
         const repository: Repository<T> = manager.getRepository(this.entity);
-        return await repository.save(new this.entity(req.body));
+        newEntity = await repository.save(newEntity);
+        return this.responseParser(newEntity);
     }
 
     /**
      * Finds all T elements.
+     * @param req: express.Request.
+     * @param res: express.Response.
+     * @param next: express.NextFunction
+     * @param manager: TypeORM transactional entity manager
      * @returns List of <T> elements.
      */
     async findAll(
@@ -38,17 +52,21 @@ abstract class AbstractController<T> {
         _res: Response,
         _next: NextFunction,
         manager: EntityManager
-    ): Promise<T[]> {
+    ): Promise<RT[]> {
         const repository: Repository<T> = manager.getRepository(this.entity);
-        return await repository.find();
+        const entities = await repository.find();
+        return entities.map((entity) => this.responseParser(entity));
     }
 
     /**
-     * Fins a <T> element by its primary key.
-     * @param req: express.Request
+     * Finds a <T> element by its primary key.
+     * @param req: express.Request.
+     * @param res: express.Response.
+     * @param next: express.NextFunction
+     * @param manager: TypeORM transactional entity manager
      * @returns <T> element.
      */
-    async findByPk(
+    async _findByPk(
         req: Request,
         _res: Response,
         _next: NextFunction,
@@ -64,38 +82,72 @@ abstract class AbstractController<T> {
     }
 
     /**
+     * Finds a <T> element by its primary key.
+     * @param req: express.Request.
+     * @param res: express.Response.
+     * @param next: express.NextFunction
+     * @param manager: TypeORM transactional entity manager
+     * @returns <RT> Response Type.
+     */
+    async findByPk(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+        manager: EntityManager
+    ): Promise<RT> {
+        const entityFound = await this._findByPk(req, res, next, manager);
+        return this.responseParser(entityFound);
+    }
+
+    /**
      * Saves a <T> element.
      * @param req: express.Request.
-     * @returns Updated <T> element.
+     * @param res: express.Response.
+     * @param next: express.NextFunction
+     * @param manager: TypeORM transactional entity manager
+     * @returns <RT> Response Type.
      */
     async save(
         req: Request,
         res: Response,
         next: NextFunction,
         manager: EntityManager
-    ): Promise<T> {
+    ): Promise<RT> {
         this._validateUpdate(req);
-        const entity = await this.findByPk(req, res, next, manager);
-        // TODO: Handle valdiation
+        // TODO: ADD loggers
+
+        let entityFound = await this._findByPk(req, res, next, manager);
+        const errors = await validate(
+            new this.entity({ ...entityFound, ...req.body })
+        );
+        if (errors.length) {
+            throw new MultipleValidationError(errors);
+        }
         const repository: Repository<T> = manager.getRepository(this.entity);
-        return await repository.save({ ...entity, ...req.body });
+        entityFound = await repository.save({ ...entityFound, ...req.body });
+        return this.responseParser(entityFound);
     }
 
     /**
      * Removes a <T> element.
      * @param req: express.Request.
-     * @returns Removed <T> element.
+     * @param res: express.Response.
+     * @param next: express.NextFunction
+     * @param manager: TypeORM transactional entity manager
+     * @returns <RT> Response Type.
      */
     async remove(
         req: Request,
         res: Response,
         next: NextFunction,
         manager: EntityManager
-    ): Promise<T> {
-        const entity = await this.findByPk(req, res, next, manager);
+    ): Promise<RT> {
+        const entityFound = await this._findByPk(req, res, next, manager);
         const repository: Repository<T> = manager.getRepository(this.entity);
-        return await repository.remove(entity);
+        return this.responseParser(await repository.remove(entityFound));
     }
+
+    protected abstract responseParser(entity: T): RT;
 
     /**
      * Validation to be run before creation.

@@ -6,11 +6,11 @@ import Runnable from "../interface/StartUpRunnable";
 import Morgan, { StreamOptions } from "morgan";
 import Winston from "winston";
 import WinstonUtils from "../util/WinstonUtil";
-import LoggerService from "../util/LoggerUtil";
+import LoggerUtil from "../util/LoggerUtil";
 
 class RoutesInitializer implements Runnable {
     run(server: Application): Application {
-        const logger = LoggerService.getLogger("MorganInitializer");
+        const logger = LoggerUtil.getLogger("MorganInitializer");
         logger.debug("Initializing Morgan...");
 
         Winston.loggers.add("consoleMorgan", {
@@ -27,7 +27,6 @@ class RoutesInitializer implements Runnable {
         const consoleStream: StreamOptions = {
             write(message: string): void {
                 // Removing break line that morgans add by default.
-                // TODO: reuse this... Is -1 needed?
                 Winston.loggers
                     .get("consoleMorgan")
                     .info(message.substring(0, message.length - 1));
@@ -39,7 +38,6 @@ class RoutesInitializer implements Runnable {
         const fileStream: StreamOptions = {
             write(message: string): void {
                 // Removing break line that morgans add by default.
-                // TODO: reuse this... Is -1 needed?
                 Winston.loggers
                     .get("fileMorgan")
                     .info(message.substring(0, message.length - 1));
