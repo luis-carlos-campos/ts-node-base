@@ -4,14 +4,9 @@ import EntityNotFoundError from "../errors/EntityNotFoundError";
 import { validate } from "class-validator";
 import MultipleValidationError from "../errors/MultipleValidationError";
 
-// sucrase ???
 abstract class AbstractController<T, RT> {
     // Properties that must be overwritten by Sub class.
-    protected abstract allowedFieldsOnCreation: [string, ...string[]];
-    protected abstract allowedFieldsOnUpdate: [string, ...string[]];
-    protected abstract entity: new (entityData: unknown) => T;
-    protected abstract requiredFieldsOnCreation: [string, ...string[]];
-    protected abstract requiredFieldsOnUpdate: [string, ...string[]];
+    protected abstract entity: new (entityData?: T) => T;
 
     /**
      * Create a <T> element.
@@ -27,16 +22,10 @@ abstract class AbstractController<T, RT> {
         _next: NextFunction,
         manager: EntityManager
     ): Promise<RT> {
-        this._validateCreation(req);
-        // TODO: Create loggers
-        let newEntity = new this.entity(req.body);
-        const errors = await validate(newEntity);
-        if (errors.length) {
-            throw new MultipleValidationError(errors);
-        }
+        const newEntity = new this.entity(req.body);
+        await this._validate(newEntity);
         const repository: Repository<T> = manager.getRepository(this.entity);
-        newEntity = await repository.save(newEntity);
-        return this.responseParser(newEntity);
+        return this.responseParser(await repository.save(newEntity));
     }
 
     /**
@@ -113,19 +102,13 @@ abstract class AbstractController<T, RT> {
         next: NextFunction,
         manager: EntityManager
     ): Promise<RT> {
-        this._validateUpdate(req);
-        // TODO: ADD loggers
-
-        let entityFound = await this._findByPk(req, res, next, manager);
-        const errors = await validate(
-            new this.entity({ ...entityFound, ...req.body })
-        );
-        if (errors.length) {
-            throw new MultipleValidationError(errors);
-        }
+        const updatedEntity = new this.entity({
+            ...(await this._findByPk(req, res, next, manager)),
+            ...req.body,
+        });
+        await this._validate(updatedEntity);
         const repository: Repository<T> = manager.getRepository(this.entity);
-        entityFound = await repository.save({ ...entityFound, ...req.body });
-        return this.responseParser(entityFound);
+        return this.responseParser(await repository.save(updatedEntity));
     }
 
     /**
@@ -150,55 +133,17 @@ abstract class AbstractController<T, RT> {
     protected abstract responseParser(entity: T): RT;
 
     /**
-     * Validation to be run before creation.
-     * @param req: express.Request.
-     */
-    private _validateCreation(req: Request): void {
-        this._validateRequest(
-            req,
-            this.requiredFieldsOnCreation,
-            this.allowedFieldsOnCreation
-        );
-    }
-
-    /**
-     * Validation to be run before update.
-     * @param req: express.Request.
-     */
-    private _validateUpdate(req: Request): void {
-        this._validateRequest(
-            req,
-            this.requiredFieldsOnUpdate,
-            this.allowedFieldsOnUpdate
-        );
-    }
-
-    /**
      * Validates incoming request.
      * @param req - express.Request
      * @param requiredFields - Request required field list.
      * @param allowedFields - Request allowed field list.
      */
-    private _validateRequest(
-        req: Request,
-        requiredFields: string[],
-        allowedFields: string[]
-    ): void {
-        const foundMissingRequiredField = requiredFields.find(
-            (field) => !req.body[field]
-        );
-        if (foundMissingRequiredField) {
-            throw new Error(
-                `Missing required field: ${foundMissingRequiredField}`
-            );
-        }
-
-        for (const key in req.body) {
-            const fieldFound = allowedFields.find((field) => field === key);
-            if (fieldFound) {
-                continue;
-            }
-            throw new Error(`Field ${key} is not allowed.`);
+    private async _validate(entity: T): Promise<void> {
+        const errors = await validate(entity, {
+            validationError: { target: false },
+        });
+        if (errors.length) {
+            throw new MultipleValidationError(errors);
         }
     }
 }

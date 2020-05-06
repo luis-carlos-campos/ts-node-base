@@ -1,18 +1,19 @@
 import Express, { Application, json } from "express";
 import Compression from "compression";
-import DatabaseInitializer from "./initializer/DatabaseInitializer";
-import RoutesInitializer from "./initializer/RoutesInitializer";
-import MorganInitializer from "./initializer/MorganInitializer";
-import StartUpRunnable from "./interface/StartUpRunnable";
+import DatabaseInitializer from "./DatabaseInitializer";
+import RoutesInitializer from "./RoutesInitializer";
+import MorganInitializer from "./MorganInitializer";
+import StartUpRunnable from "../interface/StartUpRunnable";
 
-// TODO: Error hanlding
-// TODO: 404
 // TODO: DB Migrations
+// TODO: Filter/Sort/Pagination
+// TODO: Tests
 class NodeServer {
     server!: Application;
 
     async start(): Promise<void> {
-        this.createServer();
+        this.server = Express();
+        this.server.listen(3000);
 
         this.server.use(json());
         this.server.use(Compression());
@@ -27,14 +28,6 @@ class NodeServer {
             this.server = await initializer.run(this.server);
         }
     }
-
-    createServer(): void {
-        this.server = Express();
-        this.server.listen(3000);
-    }
 }
 
-const nodeServer = new NodeServer();
-(async (): Promise<void> => {
-    await nodeServer.start();
-})();
+export default NodeServer;

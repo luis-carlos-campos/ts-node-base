@@ -6,13 +6,12 @@ import {
     IsPositive,
     IsString,
     IsDate,
-    IsISO8601,
 } from "class-validator";
 
 @Entity()
 class Project {
     @PrimaryGeneratedColumn()
-    id!: number;
+    readonly id!: number;
 
     @Column({
         length: 30,
@@ -30,14 +29,14 @@ class Project {
         name: "start_date",
     })
     @IsNotEmpty()
-    @IsISO8601()
+    @IsDate()
     startDate!: Date;
 
     @Column({
         name: "end_date",
     })
     @IsNotEmpty()
-    @IsISO8601()
+    @IsDate()
     endDate!: Date;
 
     @Column({
@@ -51,16 +50,27 @@ class Project {
     @IsPositive()
     teamSize!: number;
 
-    // TODO: improve this any
-    // TODO: do we need constructor? can we extend base entity?
-    constructor(attributes: any) {
-        if (attributes) {
-            this.name = attributes.name;
-            this.description = attributes.description;
-            this.startDate = attributes.startDate;
-            this.endDate = attributes.endDate;
-            this.email = attributes.email;
-            this.teamSize = attributes.teamSize;
+    // TypeORM calls constructor on entity initialization so we need to accept an empty constructor.
+    constructor(readonly project?: Project) {
+        if (project) {
+            const {
+                id,
+                name,
+                description,
+                startDate,
+                endDate,
+                email,
+                teamSize,
+            } = project;
+            this.id = id;
+            this.name = name;
+            this.description = description;
+            this.startDate =
+                startDate instanceof Date ? startDate : new Date(startDate);
+            this.endDate =
+                startDate instanceof Date ? endDate : new Date(endDate);
+            this.email = email;
+            this.teamSize = teamSize;
         }
     }
 }

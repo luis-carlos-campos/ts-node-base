@@ -3,9 +3,9 @@ import HttpStatusCode from "../enum/HttpStatusCode";
 import { ValidationError } from "class-validator";
 
 class MultipleValidationError extends RequestError {
-    attributeErrors: ValidationError[];
+    readonly attributeErrors: ValidationError[];
 
-    constructor(errors: ValidationError[]) {
+    constructor(readonly errors: ValidationError[]) {
         super("Entity has invalid attributes", HttpStatusCode.BAD_REQUEST);
         this.name = "Invalid Attributes";
         this.attributeErrors = errors;

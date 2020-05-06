@@ -9,6 +9,7 @@ import LoggerService from "../util/LoggerUtil";
 import ServerError from "../errors/ServerError";
 import ResponseUtil from "../util/ResponseUtil";
 import HttpStatusCode from "../enum/HttpStatusCode";
+import AbstractRoute from "../route/AbstractRoute";
 
 class RoutesInitializer implements Runnable {
     async run(server: Application): Promise<Application> {
@@ -39,11 +40,16 @@ class RoutesInitializer implements Runnable {
                 continue;
             }
             // Mount router
-            // TODO: make sure we can new it.
-            const routeRouter: Router = new (await import(routeFile)).default()
-                .router;
-            router.use(`/${fileWithoutSufix}`, routeRouter);
-            logger.debug(`${fileWithoutSufix} route created.`);
+            const routeClass: unknown = new (await import(routeFile)).default();
+            if (routeClass instanceof AbstractRoute) {
+                router.use(`/${fileWithoutSufix}`, routeClass.router);
+                logger.debug(`${fileWithoutSufix} route created.`);
+                continue;
+            } else {
+                logger.warn(
+                    `Skipping ${fileWithoutSufix}. It's not an instance of AbstractRoute.`
+                );
+            }
         }
 
         // Adding routes to express.
@@ -80,6 +86,17 @@ class RoutesInitializer implements Runnable {
                 next();
             }
         );
+
+        logger.debug("Configuring default 404 response.");
+        server.use(function (req: Request, res: Response) {
+            res.status(HttpStatusCode.NOT_FOUND).send([
+                ResponseUtil.createErrorResponse({
+                    statusCode: HttpStatusCode.NOT_FOUND,
+                    name: "Not Found",
+                    message: `Could not find endpoint: ${req.url}`,
+                }),
+            ]);
+        });
 
         logger.debug("Routing initialization was completed.");
         return server;

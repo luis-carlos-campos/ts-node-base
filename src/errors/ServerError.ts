@@ -1,9 +1,7 @@
 import HttpStatusCode from "../enum/HttpStatusCode";
 
 class ServerError extends Error {
-    statusCode: HttpStatusCode;
-
-    constructor(message: string, statusCode: HttpStatusCode) {
+    constructor(readonly message: string, readonly statusCode: HttpStatusCode) {
         super(message);
         this.statusCode = statusCode;
     }

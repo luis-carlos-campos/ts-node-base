@@ -43,22 +43,22 @@ abstract class AbstractRoute<T, RT, C extends AbstractController<T, RT>> {
     ];
     protected controller: C;
     protected logger: Logger = LoggerService.getLogger("AbstractRoute");
-    protected router: Router;
+    protected _router: Router;
 
-    constructor(controller: new () => C, allowedRouteMethods?: RouteMethod[]) {
-        if (allowedRouteMethods) {
-            this.allowedRouteMethods = allowedRouteMethods;
-        }
-        this.controller = new controller();
-        this.router = express.Router({ mergeParams: true });
-        this.configureRouter();
+    constructor(readonly controllerT: new () => C) {
+        this.controller = new controllerT();
+        this._router = express.Router({ mergeParams: true });
+        // TODO: How to improve this?? Call it later?? Should property overwrite would work?...
+        this._configureRouter();
     }
 
-    configureRouter(): void {
+    /**
+     * Configures router according to allowedRouteMethods.
+     */
+    _configureRouter(): void {
         this.allowedRouteMethods.forEach(
             ({ httpMethod, methodName, path, standardCode }) => {
-                this.router[httpMethod](path, async (req, res, next) => {
-                    // TODO: Handle response
+                this._router[httpMethod](path, async (req, res, next) => {
                     // Getting a connection and create a new query runner
                     const connection = getConnection();
                     const queryRunner = connection.createQueryRunner();
@@ -117,6 +117,10 @@ abstract class AbstractRoute<T, RT, C extends AbstractController<T, RT>> {
                 );
             }
         );
+    }
+
+    get router(): Router {
+        return this._router;
     }
 }
 
