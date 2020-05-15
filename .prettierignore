@@ -19,3 +19,6 @@ tsconfig.tsbuildinfo
 # Logs
 npm-debug.log
 logs/
+
+# Test Coverage
+coverage/

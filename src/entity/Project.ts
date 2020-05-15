@@ -11,7 +11,7 @@ import {
 @Entity()
 class Project {
     @PrimaryGeneratedColumn()
-    readonly id!: number;
+    id!: number;
 
     @Column({
         length: 30,
@@ -65,10 +65,19 @@ class Project {
             this.id = id;
             this.name = name;
             this.description = description;
-            this.startDate =
-                startDate instanceof Date ? startDate : new Date(startDate);
-            this.endDate =
-                startDate instanceof Date ? endDate : new Date(endDate);
+
+            if (!startDate || startDate instanceof Date) {
+                this.startDate = startDate;
+            } else {
+                this.startDate = new Date(startDate);
+            }
+
+            if (!endDate || endDate instanceof Date) {
+                this.endDate = endDate;
+            } else {
+                this.endDate = new Date(endDate);
+            }
+
             this.email = email;
             this.teamSize = teamSize;
         }

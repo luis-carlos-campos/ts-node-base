@@ -3,3 +3,9 @@
 
 # Build
 /dist
+
+# Jest Config File
+jest.config.js
+
+# Type ORM Config file
+ormconfig.js

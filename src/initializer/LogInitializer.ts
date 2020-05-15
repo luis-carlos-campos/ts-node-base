@@ -7,11 +7,12 @@ import Morgan, { StreamOptions } from "morgan";
 import Winston from "winston";
 import WinstonUtils from "../util/WinstonUtil";
 import LoggerUtil from "../util/LoggerUtil";
+import EnvVariablesUtil from "../util/EnvVariablesUtil";
 
 class RoutesInitializer implements Runnable {
     run(server: Application): Application {
-        const logger = LoggerUtil.getLogger("MorganInitializer");
-        logger.debug("Initializing Morgan...");
+        const logger = LoggerUtil.getLogger("LogInitializer");
+        logger.debug("Initializing Logging support...");
 
         Winston.loggers.add("consoleMorgan", {
             transports: [WinstonUtils.getConsoleTransport("Server")],
@@ -43,9 +44,14 @@ class RoutesInitializer implements Runnable {
                     .info(message.substring(0, message.length - 1));
             },
         };
-        server.use(Morgan("tiny", { stream: fileStream }));
+        server.use(
+            Morgan("tiny", {
+                stream: fileStream,
+                skip: () => EnvVariablesUtil.isTestEnv(),
+            })
+        );
 
-        logger.debug("Morgan initialization was completed.");
+        logger.debug("Logging support initialization was completed.");
         return server;
     }
 }

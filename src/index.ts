@@ -1,6 +1,6 @@
-import NodeServer from "./initializer/ServerInitializer";
+import ServerInitializer from "./initializer/ServerInitializer";
 
-const nodeServer = new NodeServer();
 (async (): Promise<void> => {
-    await nodeServer.start();
+    const server = await ServerInitializer.getServer();
+    server.listen(3000);
 })();

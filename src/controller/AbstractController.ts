@@ -127,7 +127,11 @@ abstract class AbstractController<T, RT> {
     ): Promise<RT> {
         const entityFound = await this._findByPk(req, res, next, manager);
         const repository: Repository<T> = manager.getRepository(this.entity);
-        return this.responseParser(await repository.remove(entityFound));
+        // .remove() will remove primary key from entity
+        // So we are preparing the response before calling .remove()
+        const response = this.responseParser(entityFound);
+        await repository.remove(entityFound);
+        return response;
     }
 
     protected abstract responseParser(entity: T): RT;

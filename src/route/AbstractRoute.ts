@@ -102,7 +102,6 @@ abstract class AbstractRoute<T, RT, C extends AbstractController<T, RT>> {
                             },
                             data: response,
                         });
-                        next();
                     } catch (e) {
                         // Rolling back changes
                         await queryRunner.rollbackTransaction();

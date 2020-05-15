@@ -3,6 +3,7 @@ import { Format } from "logform";
 import ServerConfigService from "./ServerConfigUtil";
 import Winston from "winston";
 import WinstonDailyRotateFile from "Winston-daily-rotate-file";
+import EnvVariablesUtil from "./EnvVariablesUtil";
 
 /**
  * Winston utillity class
@@ -16,6 +17,7 @@ class WinstonUtil {
     static getConsoleTransport(module: string): ConsoleTransportInstance {
         return new Winston.transports.Console({
             format: WinstonUtil.getColoredLogFormat(module),
+            silent: EnvVariablesUtil.isTestEnv(),
         });
     }
 
@@ -85,6 +87,7 @@ class WinstonUtil {
             filename,
             datePattern: dateFormat,
             format: WinstonUtil.getUnColoredLogFormat(module),
+            silent: EnvVariablesUtil.isTestEnv(),
         });
     }
 }

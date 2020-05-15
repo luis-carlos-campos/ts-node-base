@@ -18,5 +18,26 @@ class EnvVariablesUtil {
         }
         return nodeEnv;
     }
+
+    /**
+     * Returns true is current environment is development.
+     */
+    static isDevelopmentEnv(): boolean {
+        return EnvVariablesUtil.getNodeEnv() === "development";
+    }
+
+    /**
+     * Returns true is current environment is production.
+     */
+    static isProductionEnv(): boolean {
+        return EnvVariablesUtil.getNodeEnv() === "production";
+    }
+
+    /**
+     * Returns true is current environment is test.
+     */
+    static isTestEnv(): boolean {
+        return EnvVariablesUtil.getNodeEnv() === "test";
+    }
 }
 export default EnvVariablesUtil;

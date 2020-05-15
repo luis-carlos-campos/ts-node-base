@@ -57,7 +57,9 @@ class RoutesInitializer implements Runnable {
 
         // Error handling
         server.use(
-            (err: Error, _$: Request, res: Response, next: NextFunction) => {
+            // Next parameter will not be used, however express requires the definition otherwise the error handling will not work.
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            (err: Error, _1: Request, res: Response, _2: NextFunction) => {
                 let statusCode: HttpStatusCode =
                     HttpStatusCode.INTERNAL_SERVER_ERROR;
                 let response;
@@ -83,7 +85,6 @@ class RoutesInitializer implements Runnable {
                 *************************   END STACK  *************************
                 `);
                 res.status(statusCode).json(response);
-                next();
             }
         );
 
