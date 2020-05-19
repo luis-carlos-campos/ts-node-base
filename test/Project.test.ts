@@ -1,7 +1,8 @@
 import ServerInitializer from "../src/initializer/ServerInitializer";
 import Request from "supertest";
 import { Application } from "express";
-import { getConnection } from "typeorm";
+import { getConnection, getRepository } from "typeorm";
+import Project from "../src/entity/Project";
 
 describe("Project Route tests", () => {
     let app: Application;
@@ -16,6 +17,7 @@ describe("Project Route tests", () => {
     const newProject = {
         name: "NewProject",
         description: "This is my new project",
+        // TODO: Improve dates below
         startDate: new Date(Date.UTC(2000, 2, 2, 2, 2, 2)).toISOString(),
         endDate: new Date(Date.UTC(2000, 2, 2, 2, 2, 2)).toISOString(),
         email: "project@project.com",
@@ -30,13 +32,12 @@ describe("Project Route tests", () => {
 
     test("It should create a new Project", async () => {
         // Creating a new project
-        const postResponse = await Request(app)
+        const { body, status } = await Request(app)
             .post("/api/ProjectRoute/")
             .send(newProject);
-        let { body, status } = postResponse;
         expect(status).toBe(201);
 
-        const brandNewProjectId = body.data.id;
+        const newProjectId = body.data.id;
         expect(body).toStrictEqual({
             links: {
                 // TODO improve self validation
@@ -44,38 +45,41 @@ describe("Project Route tests", () => {
             },
             data: {
                 type: "project",
-                id: brandNewProjectId,
+                id: newProjectId,
                 attributes: newProject,
             },
         });
 
         // Making sure it was created
-        const getResponse = await Request(app).get(
-            `/api/ProjectRoute/${brandNewProjectId}`
-        );
-        (body = getResponse.body), (status = getResponse.status);
-
-        expect(status).toBe(200);
-        expect(body).toStrictEqual({
-            links: {
-                self: `http://127.0.0.1/api/ProjectRoute/${brandNewProjectId}`,
-            },
-            data: {
-                type: "project",
-                id: brandNewProjectId,
-                attributes: newProject,
-            },
-        });
+        const projectFound = await getRepository(Project).findOne(newProjectId);
+        expect(projectFound).toBeDefined();
+        if (projectFound) {
+            const {
+                id,
+                name,
+                description,
+                startDate,
+                endDate,
+                email,
+                teamSize,
+            } = projectFound;
+            expect(id).toBe(newProjectId);
+            expect(name).toBe(newProject.name);
+            expect(description).toBe(newProject.description);
+            expect(startDate.toISOString()).toBe(newProject.startDate);
+            expect(endDate.toISOString()).toBe(newProject.endDate);
+            expect(email).toBe(newProject.email);
+            expect(teamSize).toBe(newProject.teamSize);
+        }
     });
 
     test("It should not allow the creation of a project without required fields", async () => {
         const emptyProject = {};
 
         // Creating a new project
-        const postResponse = await Request(app)
+        const { body, status } = await Request(app)
             .post("/api/ProjectRoute/")
             .send(emptyProject);
-        const { body, status } = postResponse;
         expect(status).toBe(400);
         expect(body).toStrictEqual([
             {
@@ -138,58 +142,50 @@ describe("Project Route tests", () => {
 
     test("It should update a project", async () => {
         // Creating a new project
-        const postResponse = await Request(app)
-            .post("/api/ProjectRoute/")
-            .send(newProject);
-        let { body, status } = postResponse;
-        expect(status).toBe(201);
-
-        const brandNewProjectId = body.data.id;
+        const project = await getRepository(Project).save({ ...newProject });
 
         // Updating project
-        const patchResponse = await Request(app)
-            .patch(`/api/ProjectRoute/${brandNewProjectId}`)
+        const { body, status } = await Request(app)
+            .patch(`/api/ProjectRoute/${project.id}`)
             .send(updatedProject);
-        (body = patchResponse.body), (status = patchResponse.status);
         expect(status).toBe(200);
         expect(body).toStrictEqual({
             links: {
-                self: `http://127.0.0.1/api/ProjectRoute/${brandNewProjectId}`,
+                self: `http://127.0.0.1/api/ProjectRoute/${project.id}`,
             },
             data: {
                 type: "project",
-                id: brandNewProjectId,
+                id: project.id,
                 attributes: updatedProject,
             },
         });
 
         // Making sure it was updated
-        const getResponse = await Request(app).get(
-            `/api/ProjectRoute/${brandNewProjectId}`
-        );
-        (body = getResponse.body), (status = getResponse.status);
-
-        expect(status).toBe(200);
-        expect(body).toStrictEqual({
-            links: {
-                self: `http://127.0.0.1/api/ProjectRoute/${brandNewProjectId}`,
-            },
-            data: {
-                type: "project",
-                id: brandNewProjectId,
-                attributes: updatedProject,
-            },
-        });
+        const projectFound = await getRepository(Project).findOne(project.id);
+        expect(projectFound).toBeDefined();
+        if (projectFound) {
+            const {
+                id,
+                name,
+                description,
+                startDate,
+                endDate,
+                email,
+                teamSize,
+            } = projectFound;
+            expect(id).toBe(project.id);
+            expect(name).toBe(updatedProject.name);
+            expect(description).toBe(updatedProject.description);
+            expect(startDate.toISOString()).toBe(updatedProject.startDate);
+            expect(endDate.toISOString()).toBe(updatedProject.endDate);
+            expect(email).toBe(updatedProject.email);
+            expect(teamSize).toBe(updatedProject.teamSize);
+        }
     });
 
     test("It should not allow the update of a project with invalid field values", async () => {
         // Creating a new project
-        const postResponse = await Request(app)
-            .post("/api/ProjectRoute/")
-            .send(newProject);
-        let { body, status } = postResponse;
-        expect(status).toBe(201);
-        const brandNewProjectId = body.data.id;
+        const { id } = await getRepository(Project).save({ ...newProject });
 
         const emptyProject = {
             name: null,
@@ -201,10 +197,9 @@ describe("Project Route tests", () => {
         };
 
         // Updating the previously created project
-        const patchResponse = await Request(app)
-            .patch(`/api/ProjectRoute/${brandNewProjectId}`)
+        const { body, status } = await Request(app)
+            .patch(`/api/ProjectRoute/${id}`)
             .send(emptyProject);
-        (body = patchResponse.body), (status = patchResponse.status);
         expect(status).toBe(400);
         expect(body).toStrictEqual([
             {
@@ -267,43 +262,27 @@ describe("Project Route tests", () => {
 
     test("It should remove a project", async () => {
         // Creating a new project
-        const postResponse = await Request(app)
-            .post("/api/ProjectRoute/")
-            .send(newProject);
-        let { body, status } = postResponse;
-        expect(status).toBe(201);
-        const brandNewProjectId = body.data.id;
+        const { id } = await getRepository(Project).save({ ...newProject });
 
         // Removing project
-        const deleteResponse = await Request(app).delete(
-            `/api/ProjectRoute/${brandNewProjectId}`
+        const { body, status } = await Request(app).delete(
+            `/api/ProjectRoute/${id}`
         );
-        (body = deleteResponse.body), (status = deleteResponse.status);
         expect(status).toBe(200);
         expect(body).toStrictEqual({
             links: {
-                self: `http://127.0.0.1/api/ProjectRoute/${brandNewProjectId}`,
+                self: `http://127.0.0.1/api/ProjectRoute/${id}`,
             },
             data: {
                 type: "project",
-                id: brandNewProjectId,
+                id: id,
                 attributes: newProject,
             },
         });
 
         // Making sure it was removed.
-        const getResponse = await Request(app).get(
-            `/api/ProjectRoute/${brandNewProjectId}`
-        );
-        (body = getResponse.body), (status = getResponse.status);
-
-        const expectedErrorCode = 404;
-        expect(status).toBe(expectedErrorCode);
-        expect(body).toStrictEqual({
-            status: expectedErrorCode,
-            title: "Entity Not Found",
-            detail: `Could not find item with id: ${brandNewProjectId}`,
-        });
+        const removedProject = await getRepository(Project).findOne(id);
+        expect(removedProject).toBeUndefined();
     });
 
     test("It should an return an error whenever trying to update or remove an unknown element", async () => {
@@ -331,36 +310,23 @@ describe("Project Route tests", () => {
 
     test("It should return a list of projects", async () => {
         // Dropping database
-        await getConnection().synchronize(true);
+        await getRepository(Project).query("DELETE from Project");
 
-        // Creating project 1
-        let postResponse = await Request(app)
-            .post("/api/ProjectRoute/")
-            .send(newProject);
-        let { body, status } = postResponse;
-        expect(status).toBe(201);
-
-        const project1Id = body.data.id;
-
-        // Creating project 2
-        postResponse = await Request(app)
-            .post("/api/ProjectRoute/")
-            .send(newProject);
-        (body = postResponse.body), (status = postResponse.status);
-        expect(status).toBe(201);
-
-        const project2Id = body.data.id;
+        // Creating products
+        const { id } = await getRepository(Project).save({ ...newProject });
+        const product2 = await getRepository(Project).save({ ...newProject });
 
         // Making sure both were created
-        const getResponse = await Request(app).get("/api/ProjectRoute/");
-        (body = getResponse.body), (status = getResponse.status);
+        const { body, status } = await Request(app).get("/api/ProjectRoute/");
         expect(status).toBe(200);
         expect(body).toStrictEqual({
             links: { self: "http://127.0.0.1/api/ProjectRoute/" },
             data: [
-                { type: "project", id: project1Id, attributes: newProject },
-                { type: "project", id: project2Id, attributes: newProject },
+                { type: "project", id: id, attributes: newProject },
+                { type: "project", id: product2.id, attributes: newProject },
             ],
         });
     });
+
+    // TODO: Add pagination tests
 });

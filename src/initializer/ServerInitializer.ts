@@ -5,10 +5,9 @@ import RoutesInitializer from "./RoutesInitializer";
 import LogInitializer from "./LogInitializer";
 import StartUpRunnable from "../interface/StartUpRunnable";
 
-// TODO: DB Migrations
 // TODO: Filter/Sort/Pagination
-// TODO: Tests
 // TODO: Improve import
+// TODO: Add docker instance for tests
 class ServerInitializer {
     static async getServer(): Promise<Application> {
         let server: Application = Express();

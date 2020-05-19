@@ -37,13 +37,25 @@ abstract class AbstractController<T, RT> {
      * @returns List of <T> elements.
      */
     async findAll(
-        _req: Request,
+        req: Request,
         _res: Response,
         _next: NextFunction,
         manager: EntityManager
     ): Promise<RT[]> {
+        const page = Number(req.query.page);
+        const pageSize = Number(req.query.pageSize);
+        // TODO: Move take to config file (default pagination)
+        let skip = 0,
+            take = 500;
+        if (pageSize > 0 && page >= 0) {
+            skip = page * pageSize;
+            take = pageSize;
+        }
         const repository: Repository<T> = manager.getRepository(this.entity);
-        const entities = await repository.find();
+        const entities = await repository.find({
+            skip,
+            take,
+        });
         return entities.map((entity) => this.responseParser(entity));
     }
 
