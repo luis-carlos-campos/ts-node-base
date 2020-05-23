@@ -3,6 +3,7 @@ import Request from "supertest";
 import { Application } from "express";
 import { getConnection, getRepository } from "typeorm";
 import Project from "../src/entity/Project";
+import moment from "moment";
 
 describe("Project Route tests", () => {
     let app: Application;
@@ -17,9 +18,8 @@ describe("Project Route tests", () => {
     const newProject = {
         name: "NewProject",
         description: "This is my new project",
-        // TODO: Improve dates below
-        startDate: new Date(Date.UTC(2000, 2, 2, 2, 2, 2)).toISOString(),
-        endDate: new Date(Date.UTC(2000, 2, 2, 2, 2, 2)).toISOString(),
+        startDate: moment().milliseconds(0).toISOString(),
+        endDate: moment().milliseconds(0).toISOString(),
         email: "project@project.com",
         teamSize: 100,
     };
@@ -52,29 +52,6 @@ describe("Project Route tests", () => {
                     attributes: newProject,
                 },
             });
-        });
-
-        test("It should an return an error whenever trying to update or remove an unknown element", async () => {
-            const expectedErrorCode = 404;
-            const expectedResponse = {
-                status: expectedErrorCode,
-                title: "Entity Not Found",
-                detail: `Could not find item with id: myUnknownId`,
-            };
-
-            const patchResponse = await Request(app).patch(
-                `/api/ProjectRoute/myUnknownId`
-            );
-            let { body, status } = patchResponse;
-            expect(status).toBe(expectedErrorCode);
-            expect(body).toStrictEqual(expectedResponse);
-
-            const deleteResponse = await Request(app).delete(
-                `/api/ProjectRoute/myUnknownId`
-            );
-            (body = deleteResponse.body), (status = deleteResponse.status);
-            expect(status).toBe(expectedErrorCode);
-            expect(body).toStrictEqual(expectedResponse);
         });
 
         test("[POST] It should create a new Project", async () => {
@@ -230,6 +207,29 @@ describe("Project Route tests", () => {
     });
 
     describe("Validation", () => {
+        test("It should an return an error whenever trying to update or remove an unknown element", async () => {
+            const expectedErrorCode = 404;
+            const expectedResponse = {
+                status: expectedErrorCode,
+                title: "Entity Not Found",
+                detail: `Could not find item with id: myUnknownId`,
+            };
+
+            const patchResponse = await Request(app).patch(
+                `/api/ProjectRoute/myUnknownId`
+            );
+            let { body, status } = patchResponse;
+            expect(status).toBe(expectedErrorCode);
+            expect(body).toStrictEqual(expectedResponse);
+
+            const deleteResponse = await Request(app).delete(
+                `/api/ProjectRoute/myUnknownId`
+            );
+            (body = deleteResponse.body), (status = deleteResponse.status);
+            expect(status).toBe(expectedErrorCode);
+            expect(body).toStrictEqual(expectedResponse);
+        });
+
         test("It should not allow the creation of a project without required fields", async () => {
             const emptyProject = {};
 
