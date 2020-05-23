@@ -17,3 +17,12 @@ services:
         volumes:
             - ./data/db:/var/lib/mysql
             - ./data/dump:/docker-entrypoint-initdb.d/
+    mysql-test:
+        image: mysql:5.7.29
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: test-db
+            MYSQL_USER: tester
+            MYSQL_PASSWORD: tester
+        ports:
+            - "9306:3306"

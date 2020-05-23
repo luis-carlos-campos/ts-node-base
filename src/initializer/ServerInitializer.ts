@@ -1,13 +1,12 @@
 import Express, { Application, json } from "express";
 import Compression from "compression";
-import DatabaseInitializer from "./DatabaseInitializer";
+import DBInitializer from "./DBInitializer";
 import RoutesInitializer from "./RoutesInitializer";
 import LogInitializer from "./LogInitializer";
 import StartUpRunnable from "../interface/StartUpRunnable";
 
-// TODO: Filter/Sort/Pagination
+// TODO: Filter/Sort
 // TODO: Improve import
-// TODO: Add docker instance for tests
 class ServerInitializer {
     static async getServer(): Promise<Application> {
         let server: Application = Express();
@@ -17,7 +16,7 @@ class ServerInitializer {
 
         const initializersToRun: StartUpRunnable[] = [
             new LogInitializer(),
-            new DatabaseInitializer(),
+            new DBInitializer(),
             new RoutesInitializer(),
         ];
 

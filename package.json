@@ -4,16 +4,16 @@
     "description": "Base project for node/typescript applications",
     "main": "./src/index.ts",
     "scripts": {
-        "build": "rimraf ./build && tsc",
+        "build": "rimraf ./build && tsc --build src",
         "lint": "eslint . --ext .ts",
         "lint:fix": "eslint --fix . --ext .ts",
         "start:dev": "nodemon",
         "start:prod": "npm run build && node ./dist/index.js",
-        "test": "npm run db:reset && environment=test jest --runInBand",
-        "migration:apply": "ts-node ./node_modules/typeorm/cli.js migration:run",
-        "migration:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert",
-        "migration:generate": "ts-node ./node_modules/.bin/typeorm migration:generate",
-        "db:drop": "ts-node ./node_modules/.bin/typeorm schema:drop",
+        "test": "NODE_ENV=test npm run db:reset && jest --runInBand",
+        "migration:apply": "ts-node -P src/tsconfig.json ./node_modules/.bin/typeorm migration:run --config src/config/TypeORMConfig",
+        "migration:revert": "ts-node -P src/tsconfig.json ./node_modules/.bin/typeorm migration:revert --config src/config/TypeORMConfig",
+        "migration:generate": "ts-node -P src/tsconfig.json ./node_modules/.bin/typeorm migration:generate --config src/config/TypeORMConfig",
+        "db:drop": "ts-node -P src/tsconfig.json ./node_modules/.bin/typeorm schema:drop --config src/config/TypeORMConfig",
         "db:reset": "npm run db:drop && npm run migration:apply"
     },
     "repository": {

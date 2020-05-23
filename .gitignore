@@ -3,12 +3,15 @@
 
 # Build
 dist/
+test/dist/
 
 # DB Data
 data/*
 
 # TS Buildinfo file
 tsconfig.tsbuildinfo
+src/tsconfig.tsbuildinfo
+test/tsconfig.tsbuildinfo
 
 # Logs
 npm-debug.log

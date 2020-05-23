@@ -2,7 +2,7 @@ import LoggerConfigFile from "../type/config/LoggerConfigFile";
 /**
  * Logger options according to each environment.
  */
-const configs: LoggerConfigFile = {
+const LoggerConfig: LoggerConfigFile = {
     development: {
         dateFormat: "YYYY-MM-DD",
         level: "debug",
@@ -26,4 +26,4 @@ const configs: LoggerConfigFile = {
     },
 };
 
-export default configs;
+export default LoggerConfig;
