@@ -6,7 +6,6 @@ import LogInitializer from "./LogInitializer";
 import StartUpRunnable from "../interface/StartUpRunnable";
 
 // TODO: Filter/Sort
-// TODO: Improve import
 class ServerInitializer {
     static async getServer(): Promise<Application> {
         let server: Application = Express();

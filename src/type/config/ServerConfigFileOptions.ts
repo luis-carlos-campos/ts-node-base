@@ -3,6 +3,7 @@
  */
 type ServerConfigFileOptions = {
     port: number;
+    maxRequestItems: number;
 };
 
 export default ServerConfigFileOptions;

@@ -5,12 +5,15 @@ import ServerConfigFile from "../type/config/ServerConfigFile";
 const ServerConfig: ServerConfigFile = {
     development: {
         port: 3000,
+        maxRequestItems: 1000,
     },
     test: {
         port: 3000,
+        maxRequestItems: 1000,
     },
     production: {
         port: 3000,
+        maxRequestItems: 1000,
     },
 };
 

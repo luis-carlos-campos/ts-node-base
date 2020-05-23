@@ -3,6 +3,7 @@ import { Repository, EntityManager } from "typeorm";
 import EntityNotFoundError from "../errors/EntityNotFoundError";
 import { validate } from "class-validator";
 import MultipleValidationError from "../errors/MultipleValidationError";
+import ConfigUtil from "../util/ConfigUtil";
 
 abstract class AbstractController<T, RT> {
     // Properties that must be overwritten by Sub class.
@@ -44,9 +45,9 @@ abstract class AbstractController<T, RT> {
     ): Promise<RT[]> {
         const page = Number(req.query.page);
         const pageSize = Number(req.query.pageSize);
-        // TODO: Move take to config file (default pagination)
+        const { maxRequestItems } = ConfigUtil.getServerConfigs();
         let skip = 0,
-            take = 500;
+            take = maxRequestItems;
         if (pageSize > 0 && page >= 0) {
             skip = page * pageSize;
             take = pageSize;
