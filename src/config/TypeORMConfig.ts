@@ -1,4 +1,4 @@
-import ServerConfigUtil from "../util/ServerConfigUtil";
+import ConfigUtil from "../util/ConfigUtil";
 import { ConnectionOptions } from "typeorm";
 const {
     database,
@@ -6,7 +6,7 @@ const {
     password,
     port,
     username,
-} = ServerConfigUtil.getDataBaseConfigs();
+} = ConfigUtil.getDataBaseConfigs();
 import path from "path";
 
 /**

@@ -1,6 +1,6 @@
 import Winston, { Logger } from "winston";
 import WinstonUtils from "./WinstonUtil";
-import ServerConfigService from "./ServerConfigUtil";
+import ConfigService from "./ConfigUtil";
 
 /**
  * Utillity class for logging
@@ -12,7 +12,7 @@ class LoggerUtil {
      * @returns Winston.logger instance
      */
     static getLogger(label: string): Logger {
-        const { level } = ServerConfigService.getLogConfigs();
+        const { level } = ConfigService.getLogConfigs();
         const transports = [
             WinstonUtils.getConsoleTransport(label),
             WinstonUtils.getFileTransport(label),

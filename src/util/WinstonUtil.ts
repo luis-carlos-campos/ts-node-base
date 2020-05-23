@@ -1,6 +1,6 @@
 import { ConsoleTransportInstance } from "winston/lib/winston/transports";
 import { Format } from "logform";
-import ServerConfigService from "./ServerConfigUtil";
+import ConfigService from "./ConfigUtil";
 import Winston from "winston";
 import WinstonDailyRotateFile from "Winston-daily-rotate-file";
 import EnvVariablesUtil from "./EnvVariablesUtil";
@@ -27,7 +27,7 @@ class WinstonUtil {
      * @returns WinstonDailyRotateFile instance.
      */
     static getMorganFileTransport(module: string): WinstonDailyRotateFile {
-        const { requestsFileName } = ServerConfigService.getLogConfigs();
+        const { requestsFileName } = ConfigService.getLogConfigs();
         return WinstonUtil.getDefaultFileTransport(module, requestsFileName);
     }
 
@@ -37,7 +37,7 @@ class WinstonUtil {
      * @returns WinstonDailyRotateFile instance.
      */
     static getFileTransport(module: string): WinstonDailyRotateFile {
-        const { logsFileName } = ServerConfigService.getLogConfigs();
+        const { logsFileName } = ConfigService.getLogConfigs();
         return WinstonUtil.getDefaultFileTransport(module, logsFileName);
     }
 
@@ -59,7 +59,7 @@ class WinstonUtil {
      * @returns Format instance.
      */
     private static getUnColoredLogFormat(module: string): Format {
-        const { timestampFormat } = ServerConfigService.getLogConfigs();
+        const { timestampFormat } = ConfigService.getLogConfigs();
         return Winston.format.combine(
             Winston.format.label({ label: module }),
             Winston.format.timestamp({
@@ -82,7 +82,7 @@ class WinstonUtil {
         module: string,
         filename: string
     ): WinstonDailyRotateFile {
-        const { dateFormat } = ServerConfigService.getLogConfigs();
+        const { dateFormat } = ConfigService.getLogConfigs();
         return new WinstonDailyRotateFile({
             filename,
             datePattern: dateFormat,

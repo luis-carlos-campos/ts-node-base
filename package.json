@@ -4,7 +4,7 @@
     "description": "Base project for node/typescript applications",
     "main": "./src/index.ts",
     "scripts": {
-        "build": "rimraf ./build && tsc --build src",
+        "build": "rimraf ./dist && tsc --build src",
         "lint": "eslint . --ext .ts",
         "lint:fix": "eslint --fix . --ext .ts",
         "start:dev": "nodemon",

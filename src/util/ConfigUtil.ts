@@ -3,11 +3,13 @@ import LoggerConfig from "../config/LoggerConfig";
 import EnvVariablesUtil from "./EnvVariablesUtil";
 import DBConfigFileOptions from "../type/config/DBConfigFileOptions";
 import DBConfig from "../config/DBConfig";
+import ServerConfigFileOptions from "../type/config/ServerConfigFileOptions";
+import ServerConfig from "../config/ServerConfig";
 
 /**
- * Utillity for getting server config files
+ * Utillity for getting config files
  */
-class ServerConfigUtil {
+class ConfigUtil {
     static getLogConfigs(): LoggerConfigFileOptions {
         return LoggerConfig[EnvVariablesUtil.getNodeEnv()];
     }
@@ -15,6 +17,10 @@ class ServerConfigUtil {
     static getDataBaseConfigs(): DBConfigFileOptions {
         return DBConfig[EnvVariablesUtil.getNodeEnv()];
     }
+
+    static getServerConfigs(): ServerConfigFileOptions {
+        return ServerConfig[EnvVariablesUtil.getNodeEnv()];
+    }
 }
 
-export default ServerConfigUtil;
+export default ConfigUtil;
