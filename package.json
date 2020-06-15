@@ -60,7 +60,7 @@
         "moment": "2.26.0",
         "morgan": "1.10.0",
         "mysql2": "2.1.0",
-        "typeorm": "0.2.24",
+        "typeorm": "0.2.25",
         "winston": "3.2.1",
         "winston-daily-rotate-file": "4.4.2"
     },

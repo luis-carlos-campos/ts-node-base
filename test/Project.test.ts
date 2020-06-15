@@ -373,6 +373,18 @@ describe("Project Route tests", () => {
                 },
             ]);
         });
+        test("It should not allow sorting for an unkwon field", async () => {
+            const { body, status } = await Request(app).get(
+                "/api/ProjectRoute?sort=myUnknownField"
+            );
+            expect(status).toBe(500);
+            expect(body).toStrictEqual({
+                status: 500,
+                title: "Error",
+                detail:
+                    "myUnknownField column was not found in the Project entity.",
+            });
+        });
     });
 
     describe("Pagination", () => {
@@ -571,6 +583,214 @@ describe("Project Route tests", () => {
                     },
                 ],
             });
+        });
+    });
+
+    describe("Sorting", () => {
+        let product1: Project;
+        let product2: Project;
+        let product3: Project;
+        beforeAll(async () => {
+            // Dropping database
+            await getRepository(Project).clear();
+
+            // Creating products
+            product1 = await getRepository(Project).save({
+                name: "Line Flow Tool",
+                description: "LFT Project",
+                startDate: moment().year(2015).milliseconds(0).toISOString(),
+                endDate: moment().year(2021).milliseconds(0).toISOString(),
+                email: "tool@lft.com",
+                teamSize: 10,
+            });
+            product2 = await getRepository(Project).save({
+                name: "Vendor Management Tool",
+                description: "VMT Project",
+                startDate: moment().year(2018).milliseconds(0).toISOString(),
+                endDate: moment().year(2020).milliseconds(0).toISOString(),
+                email: "es-support@vmt.com",
+                teamSize: 3,
+            });
+            product3 = await getRepository(Project).save({
+                name: "Field",
+                description: "Field Project",
+                startDate: moment().year(2019).milliseconds(0).toISOString(),
+                endDate: moment().year(2020).milliseconds(0).toISOString(),
+                email: "field@field.com",
+                teamSize: 12,
+            });
+        });
+
+        test("It should return results according to sort provided", async () => {
+            // Name
+            let response = await Request(app).get(
+                "/api/ProjectRoute?sort=name"
+            );
+            let status = response.status;
+            let body = response.body;
+            expect(status).toBe(200);
+            expect(body.data[0].id).toEqual(product3.id);
+            expect(body.data[1].id).toEqual(product1.id);
+            expect(body.data[2].id).toEqual(product2.id);
+
+            // Description
+            response = await Request(app).get(
+                "/api/ProjectRoute?sort=description"
+            );
+            status = response.status;
+            body = response.body;
+            expect(status).toBe(200);
+            expect(body.data[0].id).toEqual(product3.id);
+            expect(body.data[1].id).toEqual(product1.id);
+            expect(body.data[2].id).toEqual(product2.id);
+
+            // Start Date
+            response = await Request(app).get(
+                "/api/ProjectRoute?sort=startDate"
+            );
+            status = response.status;
+            body = response.body;
+            expect(status).toBe(200);
+            expect(body.data[0].id).toEqual(product1.id);
+            expect(body.data[1].id).toEqual(product2.id);
+            expect(body.data[2].id).toEqual(product3.id);
+
+            // End Date
+            response = await Request(app).get("/api/ProjectRoute?sort=endDate");
+            status = response.status;
+            body = response.body;
+            expect(status).toBe(200);
+            expect(body.data[0].id).toEqual(product2.id);
+            expect(body.data[1].id).toEqual(product3.id);
+            expect(body.data[2].id).toEqual(product1.id);
+
+            // Email
+            response = await Request(app).get("/api/ProjectRoute?sort=email");
+            status = response.status;
+            body = response.body;
+            expect(status).toBe(200);
+            expect(body.data[0].id).toEqual(product2.id);
+            expect(body.data[1].id).toEqual(product3.id);
+            expect(body.data[2].id).toEqual(product1.id);
+
+            // Team Size
+            response = await Request(app).get(
+                "/api/ProjectRoute?sort=teamSize"
+            );
+            status = response.status;
+            body = response.body;
+            expect(status).toBe(200);
+            expect(body.data[0].id).toEqual(product2.id);
+            expect(body.data[1].id).toEqual(product1.id);
+            expect(body.data[2].id).toEqual(product3.id);
+        });
+
+        test("It should allow descending sort whenever minus sign is provided", async () => {
+            // Name
+            let response = await Request(app).get(
+                "/api/ProjectRoute?sort=-name"
+            );
+            let status = response.status;
+            let body = response.body;
+            expect(status).toBe(200);
+            expect(body.data[0].id).toEqual(product2.id);
+            expect(body.data[1].id).toEqual(product1.id);
+            expect(body.data[2].id).toEqual(product3.id);
+
+            // Description
+            response = await Request(app).get(
+                "/api/ProjectRoute?sort=-description"
+            );
+            status = response.status;
+            body = response.body;
+            expect(status).toBe(200);
+            expect(body.data[0].id).toEqual(product2.id);
+            expect(body.data[1].id).toEqual(product1.id);
+            expect(body.data[2].id).toEqual(product3.id);
+
+            // Start Date
+            response = await Request(app).get(
+                "/api/ProjectRoute?sort=-startDate"
+            );
+            status = response.status;
+            body = response.body;
+            expect(status).toBe(200);
+            expect(body.data[0].id).toEqual(product3.id);
+            expect(body.data[1].id).toEqual(product2.id);
+            expect(body.data[2].id).toEqual(product1.id);
+
+            // End Date
+            response = await Request(app).get(
+                "/api/ProjectRoute?sort=-endDate"
+            );
+            status = response.status;
+            body = response.body;
+            expect(status).toBe(200);
+            expect(body.data[0].id).toEqual(product1.id);
+            expect(body.data[1].id).toEqual(product2.id);
+            expect(body.data[2].id).toEqual(product3.id);
+
+            // Email
+            response = await Request(app).get("/api/ProjectRoute?sort=-email");
+            status = response.status;
+            body = response.body;
+            expect(status).toBe(200);
+            expect(body.data[0].id).toEqual(product1.id);
+            expect(body.data[1].id).toEqual(product3.id);
+            expect(body.data[2].id).toEqual(product2.id);
+
+            // Team Size
+            response = await Request(app).get(
+                "/api/ProjectRoute?sort=-teamSize"
+            );
+            status = response.status;
+            body = response.body;
+            expect(status).toBe(200);
+            expect(body.data[0].id).toEqual(product3.id);
+            expect(body.data[1].id).toEqual(product1.id);
+            expect(body.data[2].id).toEqual(product2.id);
+        });
+
+        test("It should allow composite sorting whenever sort values is separated by commas", async () => {
+            let response = await Request(app).get(
+                "/api/ProjectRoute?sort=-endDate,name"
+            );
+            let status = response.status;
+            let body = response.body;
+            expect(status).toBe(200);
+            expect(body.data[0].id).toEqual(product1.id);
+            expect(body.data[1].id).toEqual(product3.id);
+            expect(body.data[2].id).toEqual(product2.id);
+
+            response = await Request(app).get(
+                "/api/ProjectRoute?sort=-endDate,-name"
+            );
+            status = response.status;
+            body = response.body;
+            expect(body.data[0].id).toEqual(product1.id);
+            expect(body.data[1].id).toEqual(product2.id);
+            expect(body.data[2].id).toEqual(product3.id);
+        });
+
+        test("It should work along with pagination", async () => {
+            let response = await Request(app).get(
+                "/api/ProjectRoute?sort=-endDate,name&pageSize=2&page=0"
+            );
+            let status = response.status;
+            let body = response.body;
+            expect(status).toBe(200);
+            expect(body.data.length).toEqual(2);
+            expect(body.data[0].id).toEqual(product1.id);
+            expect(body.data[1].id).toEqual(product3.id);
+
+            response = await Request(app).get(
+                "/api/ProjectRoute?sort=-endDate,name&pageSize=2&page=1"
+            );
+            status = response.status;
+            body = response.body;
+            expect(status).toBe(200);
+            expect(body.data.length).toEqual(1);
+            expect(body.data[0].id).toEqual(product2.id);
         });
     });
 });

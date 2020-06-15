@@ -4,7 +4,6 @@ import EntityNotFoundError from "../errors/EntityNotFoundError";
 import { validate } from "class-validator";
 import MultipleValidationError from "../errors/MultipleValidationError";
 import ConfigUtil from "../util/ConfigUtil";
-
 abstract class AbstractController<T, RT> {
     // Properties that must be overwritten by Sub class.
     protected abstract entity: new (entityData?: T) => T;
@@ -53,9 +52,27 @@ abstract class AbstractController<T, RT> {
             take = pageSize;
         }
         const repository: Repository<T> = manager.getRepository(this.entity);
+
+        const { sort } = req.query;
+        let order: T | undefined;
+        if (sort) {
+            const orderObject: { [k: string]: "DESC" | "ASC" } = {};
+            String(sort)
+                .split(",")
+                .forEach((sortCriteria) => {
+                    const isDescendingOrder = sortCriteria.startsWith("-");
+                    const fieldName = isDescendingOrder
+                        ? sortCriteria.substr(1, sortCriteria.length)
+                        : sortCriteria;
+                    orderObject[fieldName] = isDescendingOrder ? "DESC" : "ASC";
+                });
+            order = (orderObject as unknown) as T;
+        }
+
         const entities = await repository.find({
             skip,
             take,
+            order,
         });
         return entities.map((entity) => this.responseParser(entity));
     }
