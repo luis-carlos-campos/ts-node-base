@@ -17,7 +17,7 @@
    6. [Tests](#tests)
 5. [Getting Started](#getting-started)
 6. [TODO List](#todo-list)
-7. [Issues](#issues/new-features)
+7. [Issues/New Features](#issues/new-features)
 
 ## Architecture
 Boilerplate setup with:
@@ -227,6 +227,6 @@ You can also start the production version by running:
 Add filtering for CRUDs
 
 ## Issues/New features
-You can request issues or new features through github Issues tab.
+You can report issues or request new features through github Issues tab.
 
 Feel free to contribute with new features and bug fixing.
