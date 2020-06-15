@@ -9,6 +9,9 @@
    1. [Database Migration](#database-migration)
    2. [Generic CRUDs](#generic-cruds)
    3. [Generic Error handling](#generic-error-handling)
+      1. [Validation](#validation)
+      2. [Pagination](#pagination)
+      3. [Sorting](#sorting)
    4. [Hooks](#hooks)
    5. [Logging](#logging)
    6. [Tests](#tests)
@@ -30,7 +33,7 @@ Boilerplate setup with:
 **Controller** tier takes care of:
 - Applying bussiness rules
 
-**Repostiroy** tier takes care of:
+**Repository** tier takes care of:
 - Acessing database
 
 **Service** tier is meant to be used whenever a code must be used for both controller and scripts.
@@ -113,6 +116,58 @@ In order to create a new CRUD you must do the following:
    1. This route must extend AbstractRoute
    2. You must provide your new entity/response type/controller to AbstractRoute
 
+CRUD will create the following endpoints: (i.e. New Route file name = UserRoute.tsx)
+
+| Method               | Endpoint  |
+|----------------------|---------------|
+|GET | /api/UserRoute/:id |
+|POST | /api/UserRoute/:id |
+|PATCH | /api/UserRoute/:id |
+|DELETE | /api/UserRoute/:id |
+| GET | /api/UserRoute/ *** |
+
+***This endpoint has sort and pagination enabled.
+
+##### Validation
+Whenever server could not find an element with the provided id an error **404** will be returned.
+
+PATCH and POST will apply validation before trying to insert/update items on database.
+You can specify the validation that is going to be applied by adding class-validator annotations into entity objects.
+Whenever this validation fails, an error **400** wil be returned with information about invalid fields.
+
+##### Pagination
+In order to paginate a CRUD endpoint you have to provide 2 parameters: **pageSize** and **page**.
+
+| Parameter            | Description   |
+|----------------------|---------------|
+| pageSize             | is the number of elements the request should return. |
+| page                 |  is the page number you want to return |
+
+Example:
+Let's suposse we've 50 users
+
+| Name                 | Description   |
+|----------------------|---------------|
+| Users (0 - 10)       | /api/UserRoute?pageSize=10&page=0 |
+| Users (11 - 20)      | /api/UserRoute?pageSize=10&page=1 |
+| Users (21 - 30)      | /api/UserRoute?pageSize=10&page=2 |
+| Users (31 - 40)      | /api/UserRoute?pageSize=10&page=3 |
+| Users (41 - 50)      | /api/UserRoute?pageSize=10&page=4 |
+
+Whenever pageSize, page or both parameters are missing, all* records will be returned.<br/>
+*Due to performance concerns server will not return more than 1000 records.
+
+##### Sorting
+In order to paginate a CRUD endpoint you have to provide **sort** parameter.<br/>
+You can perform multiple sorting by using commas.<br/>
+You can perform DESC sort by adding (-) in front of the parameter.
+
+Example:
+
+    /api/UserRoute?sort=-endDate,name
+
+Whenever the sort parameter contains an invalid field, an error **500** will be returned informing an invalid sort value was found.
+
 #### Generic Error handling
 Generic error handling is configured under RoutesInitializer.
 Any exepction thrown within an express route will be captured and handled gracefully.
@@ -132,6 +187,7 @@ Tests are setup with Jest and Supertest.
 Test files are being stored under $ROOT_DIR/test/
 
 For running all tests:
+
     npm run test
 
 ## Getting started
@@ -156,9 +212,11 @@ For running all tests:
 ## Building
 
 You can build the project by running:
+
     npm run build
 
 Compiled code will be available under $ROOT_DIR/dist/
 
 You can also start the production version by running:
+
     npm run start:prod
