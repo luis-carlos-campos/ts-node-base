@@ -207,7 +207,11 @@ For running all tests:
 
     docker-compose up -d
 
-4- Start dev server
+4- Reset database
+
+    npm run db:reset
+
+5- Start dev server
 
     npm run start:dev
 
