@@ -16,6 +16,8 @@
    5. [Logging](#logging)
    6. [Tests](#tests)
 5. [Getting Started](#getting-started)
+6. [TODO List](#todo-list)
+7. [Issues](#issues/new-features)
 
 ## Architecture
 Boilerplate setup with:
@@ -220,3 +222,11 @@ Compiled code will be available under $ROOT_DIR/dist/
 You can also start the production version by running:
 
     npm run start:prod
+
+## TODO List
+Add filtering for CRUDs
+
+## Issues/New features
+You can request issues or new features through github Issues tab.
+
+Feel free to contribute with new features and bug fixing.
