@@ -1,23 +1,25 @@
 # Table of Contents
-1. [Architecture](#architecture)
-2. [Requirements](#requirements)
-3. [Project Structure](#project-structure)
-   1. [Root dir](#root-dir)
-   2. [src](#src)
-4. [Features](#features)
-   1. [Database](#database)
-   1. [Database Migration](#database-migration)
-   2. [Generic CRUDs](#generic-cruds)
-   3. [Generic Error handling](#generic-error-handling)
-      1. [Validation](#validation)
-      2. [Pagination](#pagination)
-      3. [Sorting](#sorting)
-   4. [Hooks](#hooks)
-   5. [Logging](#logging)
-   6. [Tests](#tests)
-5. [Getting Started](#getting-started)
-6. [TODO List](#todo-list)
-7. [Issues/New Features](#issues/new-features)
+- [Table of Contents](#table-of-contents)
+  - [Architecture](#architecture)
+  - [Requirements](#requirements)
+  - [Project Structure](#project-structure)
+      - [Root dir](#root-dir)
+      - [src](#src)
+  - [Features](#features)
+      - [Database](#database)
+      - [Database Migration](#database-migration)
+      - [Generic CRUDs](#generic-cruds)
+        - [Validation](#validation)
+        - [Pagination](#pagination)
+        - [Sorting](#sorting)
+      - [Generic Error handling](#generic-error-handling)
+      - [Hooks](#hooks)
+      - [Logging](#logging)
+      - [Tests](#tests)
+  - [Getting started](#getting-started)
+  - [Building](#building)
+  - [TODO List](#todo-list)
+  - [Issues/New features](#issuesnew-features)
 
 ## Architecture
 Boilerplate setup with:
@@ -196,7 +198,7 @@ For running all tests:
 
 1- Clone repository
 
-    git clone https://github.com/luis-carlos-campos/ts-node-base.git
+    git clone https://github.pie.apple.com/venturus/ts-node-base.git
     cd ts-node-base
 
 2- Install dependencies

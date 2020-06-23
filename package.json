@@ -18,14 +18,14 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/luis-carlos-campos/ts-node-base.git"
+        "url": "git+https://github.pie.apple.com/venturus/ts-node-base.git"
     },
     "author": "Luís Carlos Campos",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/luis-carlos-campos/ts-node-base/issues"
+        "url": "https://github.pie.apple.com/venturus/ts-node-base/issues"
     },
-    "homepage": "https://github.com/luis-carlos-campos/ts-node-base#readme",
+    "homepage": "https://github.pie.apple.com/venturus/ts-node-base#readme",
     "devDependencies": {
         "@types/compression": "1.7.0",
         "@types/express": "4.17.6",
