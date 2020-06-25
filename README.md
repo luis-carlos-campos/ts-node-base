@@ -35,7 +35,7 @@ Boilerplate setup with:
 - Handling responses
 
 **Controller** tier takes care of:
-- Applying bussiness rules
+- Applying business rules
 
 **Repository** tier takes care of:
 - Acessing database
@@ -88,17 +88,23 @@ There are 2 MySQL docker instance configure on docker-compose.yaml:
 Database data is being stored under $ROOT_DIR/data/
 
 You can drop your schema by running:
+
     npm run db:drop
 
 You can reset your database by running:
+
+    npm run db:reset
 
 
 #### Database Migration
 Database migrations are located under /src/migration.
 
 For applying all migrations into your current database, run:
+
     npm run migration:apply
+
 For reverting, run:
+
     npm run migration:revert
 
 #### Generic CRUDs
@@ -111,7 +117,7 @@ In order to create a new CRUD you must do the following:
 1. Create your new entity (under /src/entity/)
    1. Add annotations for both TypeORM and class-validator.
 2. Create a new Response Type (under /src/type/response/entity/)
-3. Create a new controller (under /src/entity/)
+3. Create a new controller (under /src/controller/)
    1. This controller must extend AbstractController
    2. You must provide your new entity/response type to AbstractController
    3. Implement responseParser.
@@ -120,7 +126,7 @@ In order to create a new CRUD you must do the following:
    1. This route must extend AbstractRoute
    2. You must provide your new entity/response type/controller to AbstractRoute
 
-CRUD will create the following endpoints: (i.e. New Route file name = UserRoute.tsx)
+CRUD will create the following endpoints: (i.e. New Route file name = UserRoute.ts)
 
 | Method               | Endpoint  |
 |----------------------|---------------|
@@ -201,7 +207,7 @@ Whenever the sort parameter contains an invalid field, an error **500** will be 
 
 #### Generic Error handling
 Generic error handling is configured under RoutesInitializer.
-Any exepction thrown within an express route will be captured and handled gracefully.
+Any exception thrown within an express route will be captured and handled gracefully.
 
 #### Hooks
 Pre-commit hook is configured with Prettier and Linter.
