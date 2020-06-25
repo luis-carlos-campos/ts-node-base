@@ -132,6 +132,33 @@ CRUD will create the following endpoints: (i.e. New Route file name = UserRoute.
 
 ***This endpoint has sort and pagination enabled.
 
+##### Custom Route Name
+If you want your route to have a custom name instead of the file name, you may use the ```CustomRouteName``` decorator.
+
+Example: 
+```typescript
+@CustomRouteName("customName")
+class CustomRoute extends AbstractRoute<
+    Project,    
+    ProjectResponseType,
+    ProjectController
+> {
+    constructor() {
+        super(ProjectController);
+    }
+}
+```
+Then your endpoints will look like:
+
+| Method               | Endpoint  |
+|----------------------|---------------|
+|GET | /api/customName/:id |
+|POST | /api/customName/:id |
+|PATCH | /api/customName/:id |
+|DELETE | /api/customName/:id |
+| GET | /api/customName/ |
+
+
 ##### Validation
 Whenever server could not find an element with the provided id an error **404** will be returned.
 
