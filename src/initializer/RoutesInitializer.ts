@@ -39,11 +39,14 @@ class RoutesInitializer implements Runnable {
             if (lstatSync(routeFile).isDirectory()) {
                 continue;
             }
+
             // Mount router
             const routeClass: unknown = new (await import(routeFile)).default();
             if (routeClass instanceof AbstractRoute) {
-                router.use(`/${fileWithoutSufix}`, routeClass.router);
-                logger.debug(`${fileWithoutSufix} route created.`);
+                const routeName =
+                    Reflect.get(routeClass, "routeName") || fileWithoutSufix;
+                router.use(`/${routeName}`, routeClass.router);
+                logger.debug(`${routeName} route created.`);
                 continue;
             } else {
                 logger.warn(
