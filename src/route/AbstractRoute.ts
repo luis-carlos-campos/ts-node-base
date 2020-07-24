@@ -1,46 +1,17 @@
-import AbstractController from "../controller/AbstractController";
 import express, { Router } from "express";
-import HttpMethod from "../enum/HttpMethod";
 import RouteMethod from "../type/RouteMethod";
 import { Logger } from "winston";
 import LoggerService from "../util/LoggerUtil";
 import { getConnection } from "typeorm";
 import NotImplementedError from "../errors/NotImplementedError";
-import HttpStatusCode from "../enum/HttpStatusCode";
+import AbstractController from "../controller/AbstractController";
 
-abstract class AbstractRoute<T, RT, C extends AbstractController<T, RT>> {
-    protected allowedRouteMethods: RouteMethod[] = [
-        {
-            httpMethod: HttpMethod.GET,
-            methodName: "findAll",
-            path: "/",
-            standardCode: HttpStatusCode.SUCCESS,
-        },
-        {
-            httpMethod: HttpMethod.GET,
-            methodName: "findByPk",
-            path: "/:id",
-            standardCode: HttpStatusCode.SUCCESS,
-        },
-        {
-            httpMethod: HttpMethod.PATCH,
-            methodName: "save",
-            path: "/:id",
-            standardCode: HttpStatusCode.SUCCESS,
-        },
-        {
-            httpMethod: HttpMethod.POST,
-            methodName: "create",
-            path: "/",
-            standardCode: HttpStatusCode.CREATED,
-        },
-        {
-            httpMethod: HttpMethod.DELETE,
-            methodName: "remove",
-            path: "/:id",
-            standardCode: HttpStatusCode.SUCCESS,
-        },
-    ];
+/**
+ * This Route is meant to be extended by all other routes.
+ * It'll provide error handling and transactional entity manager
+ */
+abstract class AbstractRoute<C extends AbstractController> {
+    protected abstract allowedRouteMethods: RouteMethod[];
     protected controller: C;
     protected logger: Logger = LoggerService.getLogger("AbstractRoute");
     protected _router: Router;
@@ -48,14 +19,12 @@ abstract class AbstractRoute<T, RT, C extends AbstractController<T, RT>> {
     constructor(readonly controllerT: new () => C) {
         this.controller = new controllerT();
         this._router = express.Router({ mergeParams: true });
-        // TODO: How to improve this?? Call it later?? Should property overwrite would work?...
-        this._configureRouter();
     }
 
     /**
      * Configures router according to allowedRouteMethods.
      */
-    _configureRouter(): void {
+    setupRoutes(): void {
         this.allowedRouteMethods.forEach(
             ({ httpMethod, methodName, path, standardCode }) => {
                 this._router[httpMethod](path, async (req, res, next) => {
@@ -82,11 +51,11 @@ abstract class AbstractRoute<T, RT, C extends AbstractController<T, RT>> {
                                 `Method ${methodName} was not implemented in controller class`
                             );
                         }
+                        this.controller.entityManager = queryRunner.manager;
                         const response = await controller[methodName](
                             req,
                             res,
-                            next,
-                            queryRunner.manager
+                            next
                         );
 
                         // Commiting transaction
@@ -94,11 +63,7 @@ abstract class AbstractRoute<T, RT, C extends AbstractController<T, RT>> {
 
                         res.status(standardCode).send({
                             links: {
-                                self:
-                                    req.protocol +
-                                    "://" +
-                                    req.hostname +
-                                    req.originalUrl,
+                                self: `${req.protocol}://${req.hostname}${req.originalUrl}`,
                             },
                             data: response,
                         });

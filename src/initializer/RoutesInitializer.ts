@@ -26,7 +26,8 @@ class RoutesInitializer implements Runnable {
             const fileWithoutSufix = fileName.split(".")[0];
 
             // Ignore AbstractRoute
-            if (fileWithoutSufix === "AbstractRoute") {
+            const ignoredRoutes = ["AbstractRoute", "AbstractCrudRoute"];
+            if (ignoredRoutes.includes(fileWithoutSufix)) {
                 logger.debug(`Skipping ${fileWithoutSufix}`);
                 continue;
             }
@@ -41,11 +42,15 @@ class RoutesInitializer implements Runnable {
             }
 
             // Mount router
-            const routeClass: unknown = new (await import(routeFile)).default();
-            if (routeClass instanceof AbstractRoute) {
+            const routeToBeCreated: unknown = new (
+                await import(routeFile)
+            ).default();
+            if (routeToBeCreated instanceof AbstractRoute) {
                 const routeName =
-                    Reflect.get(routeClass, "routeName") || fileWithoutSufix;
-                router.use(`/${routeName}`, routeClass.router);
+                    Reflect.get(routeToBeCreated, "routeName") ||
+                    fileWithoutSufix;
+                router.use(`/${routeName}`, routeToBeCreated.router);
+                routeToBeCreated.setupRoutes();
                 logger.debug(`${routeName} route created.`);
                 continue;
             } else {
