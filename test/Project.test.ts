@@ -3,7 +3,10 @@ import Request from "supertest";
 import { Application } from "express";
 import { getConnection, getRepository } from "typeorm";
 import Project from "../src/entity/Project";
+import ProjectResponseType from "../src/type/response/entity/ProjectResponseType";
 import moment from "moment";
+import JsonApiSingleResouceResponse from "../src/type/response/json-api/JsonApiSingleResouceResponse";
+import JsonApiMultipleResoucesResponse from "../src/type/response/json-api/JsonApiMultipleResoucesResponse";
 
 describe("Project Route tests", () => {
     let app: Application;
@@ -38,9 +41,13 @@ describe("Project Route tests", () => {
             });
 
             // Updating project
-            const { body, status } = await Request(app).get(
+            const response = await Request(app).get(
                 `/api/ProjectRoute/${project.id}`
             );
+            const body = response.body as JsonApiSingleResouceResponse<
+                ProjectResponseType
+            >;
+            const status = response.status;
             expect(status).toBe(200);
             expect(body).toStrictEqual({
                 links: {
@@ -56,9 +63,14 @@ describe("Project Route tests", () => {
 
         test("[POST] It should create a new Project", async () => {
             // Creating a new project
-            const { body, status } = await Request(app)
+            const response = await Request(app)
                 .post("/api/ProjectRoute/")
                 .send(newProject);
+            const body = response.body as JsonApiSingleResouceResponse<
+                ProjectResponseType
+            >;
+            const status = response.status;
+
             expect(status).toBe(201);
 
             const newProjectId = body.data.id;
@@ -106,9 +118,14 @@ describe("Project Route tests", () => {
             });
 
             // Updating project
-            const { body, status } = await Request(app)
+            const response = await Request(app)
                 .patch(`/api/ProjectRoute/${project.id}`)
                 .send(updatedProject);
+            const body = response.body as JsonApiSingleResouceResponse<
+                ProjectResponseType
+            >;
+            const status = response.status;
+
             expect(status).toBe(200);
             expect(body).toStrictEqual({
                 links: {
@@ -151,9 +168,13 @@ describe("Project Route tests", () => {
             const { id } = await getRepository(Project).save({ ...newProject });
 
             // Removing project
-            const { body, status } = await Request(app).delete(
+            const response = await Request(app).delete(
                 `/api/ProjectRoute/${id}`
             );
+            const body = response.body as JsonApiSingleResouceResponse<
+                ProjectResponseType
+            >;
+            const status = response.status;
             expect(status).toBe(200);
             expect(body).toStrictEqual({
                 links: {
@@ -184,9 +205,11 @@ describe("Project Route tests", () => {
             });
 
             // Making sure both were created
-            const { body, status } = await Request(app).get(
-                "/api/ProjectRoute/"
-            );
+            const response = await Request(app).get("/api/ProjectRoute/");
+            const body = response.body as JsonApiMultipleResoucesResponse<
+                ProjectResponseType
+            >;
+            const status = response.status;
             expect(status).toBe(200);
             expect(body).toStrictEqual({
                 links: { self: "http://127.0.0.1/api/ProjectRoute/" },
@@ -218,14 +241,20 @@ describe("Project Route tests", () => {
             const patchResponse = await Request(app).patch(
                 `/api/ProjectRoute/myUnknownId`
             );
-            let { body, status } = patchResponse;
+            let body = patchResponse.body as JsonApiSingleResouceResponse<
+                ProjectResponseType
+            >;
+            let status = patchResponse.status;
             expect(status).toBe(expectedErrorCode);
             expect(body).toStrictEqual(expectedResponse);
 
             const deleteResponse = await Request(app).delete(
                 `/api/ProjectRoute/myUnknownId`
             );
-            (body = deleteResponse.body), (status = deleteResponse.status);
+            (body = deleteResponse.body as JsonApiSingleResouceResponse<
+                ProjectResponseType
+            >),
+                (status = deleteResponse.status);
             expect(status).toBe(expectedErrorCode);
             expect(body).toStrictEqual(expectedResponse);
         });
@@ -234,11 +263,11 @@ describe("Project Route tests", () => {
             const emptyProject = {};
 
             // Creating a new project
-            const { body, status } = await Request(app)
+            const response = await Request(app)
                 .post("/api/ProjectRoute/")
                 .send(emptyProject);
-            expect(status).toBe(400);
-            expect(body).toStrictEqual([
+            expect(response.status).toBe(400);
+            expect(response.body).toStrictEqual([
                 {
                     status: 400,
                     title: "Invalid Attributes: name = undefined",
@@ -311,11 +340,11 @@ describe("Project Route tests", () => {
             };
 
             // Updating the previously created project
-            const { body, status } = await Request(app)
+            const response = await Request(app)
                 .patch(`/api/ProjectRoute/${id}`)
                 .send(emptyProject);
-            expect(status).toBe(400);
-            expect(body).toStrictEqual([
+            expect(response.status).toBe(400);
+            expect(response.body).toStrictEqual([
                 {
                     status: 400,
                     title: "Invalid Attributes: name = null",
@@ -374,11 +403,11 @@ describe("Project Route tests", () => {
             ]);
         });
         test("It should not allow sorting for an unkwon field", async () => {
-            const { body, status } = await Request(app).get(
+            const response = await Request(app).get(
                 "/api/ProjectRoute?sort=myUnknownField"
             );
-            expect(status).toBe(500);
-            expect(body).toStrictEqual({
+            expect(response.status).toBe(500);
+            expect(response.body).toStrictEqual({
                 status: 500,
                 title: "Error",
                 detail:
@@ -402,11 +431,11 @@ describe("Project Route tests", () => {
         });
 
         test("It should return results according to pageSize/page", async () => {
-            const { body, status } = await Request(app).get(
+            const response = await Request(app).get(
                 "/api/ProjectRoute?pageSize=1&page=1"
             );
-            expect(status).toBe(200);
-            expect(body).toStrictEqual({
+            expect(response.status).toBe(response.status);
+            expect(response.body).toStrictEqual({
                 links: {
                     self: "http://127.0.0.1/api/ProjectRoute?pageSize=1&page=1",
                 },
@@ -627,7 +656,9 @@ describe("Project Route tests", () => {
                 "/api/ProjectRoute?sort=name"
             );
             let status = response.status;
-            let body = response.body;
+            let body = response.body as JsonApiMultipleResoucesResponse<
+                ProjectResponseType
+            >;
             expect(status).toBe(200);
             expect(body.data[0].id).toEqual(product3.id);
             expect(body.data[1].id).toEqual(product1.id);
@@ -638,7 +669,9 @@ describe("Project Route tests", () => {
                 "/api/ProjectRoute?sort=description"
             );
             status = response.status;
-            body = response.body;
+            body = response.body as JsonApiMultipleResoucesResponse<
+                ProjectResponseType
+            >;
             expect(status).toBe(200);
             expect(body.data[0].id).toEqual(product3.id);
             expect(body.data[1].id).toEqual(product1.id);
@@ -649,7 +682,9 @@ describe("Project Route tests", () => {
                 "/api/ProjectRoute?sort=startDate"
             );
             status = response.status;
-            body = response.body;
+            body = response.body as JsonApiMultipleResoucesResponse<
+                ProjectResponseType
+            >;
             expect(status).toBe(200);
             expect(body.data[0].id).toEqual(product1.id);
             expect(body.data[1].id).toEqual(product2.id);
@@ -658,7 +693,9 @@ describe("Project Route tests", () => {
             // End Date
             response = await Request(app).get("/api/ProjectRoute?sort=endDate");
             status = response.status;
-            body = response.body;
+            body = response.body as JsonApiMultipleResoucesResponse<
+                ProjectResponseType
+            >;
             expect(status).toBe(200);
             expect(body.data[0].id).toEqual(product2.id);
             expect(body.data[1].id).toEqual(product3.id);
@@ -667,7 +704,9 @@ describe("Project Route tests", () => {
             // Email
             response = await Request(app).get("/api/ProjectRoute?sort=email");
             status = response.status;
-            body = response.body;
+            body = response.body as JsonApiMultipleResoucesResponse<
+                ProjectResponseType
+            >;
             expect(status).toBe(200);
             expect(body.data[0].id).toEqual(product2.id);
             expect(body.data[1].id).toEqual(product3.id);
@@ -678,7 +717,9 @@ describe("Project Route tests", () => {
                 "/api/ProjectRoute?sort=teamSize"
             );
             status = response.status;
-            body = response.body;
+            body = response.body as JsonApiMultipleResoucesResponse<
+                ProjectResponseType
+            >;
             expect(status).toBe(200);
             expect(body.data[0].id).toEqual(product2.id);
             expect(body.data[1].id).toEqual(product1.id);
@@ -691,7 +732,9 @@ describe("Project Route tests", () => {
                 "/api/ProjectRoute?sort=-name"
             );
             let status = response.status;
-            let body = response.body;
+            let body = response.body as JsonApiMultipleResoucesResponse<
+                ProjectResponseType
+            >;
             expect(status).toBe(200);
             expect(body.data[0].id).toEqual(product2.id);
             expect(body.data[1].id).toEqual(product1.id);
@@ -702,7 +745,9 @@ describe("Project Route tests", () => {
                 "/api/ProjectRoute?sort=-description"
             );
             status = response.status;
-            body = response.body;
+            body = response.body as JsonApiMultipleResoucesResponse<
+                ProjectResponseType
+            >;
             expect(status).toBe(200);
             expect(body.data[0].id).toEqual(product2.id);
             expect(body.data[1].id).toEqual(product1.id);
@@ -713,7 +758,9 @@ describe("Project Route tests", () => {
                 "/api/ProjectRoute?sort=-startDate"
             );
             status = response.status;
-            body = response.body;
+            body = response.body as JsonApiMultipleResoucesResponse<
+                ProjectResponseType
+            >;
             expect(status).toBe(200);
             expect(body.data[0].id).toEqual(product3.id);
             expect(body.data[1].id).toEqual(product2.id);
@@ -724,7 +771,9 @@ describe("Project Route tests", () => {
                 "/api/ProjectRoute?sort=-endDate"
             );
             status = response.status;
-            body = response.body;
+            body = response.body as JsonApiMultipleResoucesResponse<
+                ProjectResponseType
+            >;
             expect(status).toBe(200);
             expect(body.data[0].id).toEqual(product1.id);
             expect(body.data[1].id).toEqual(product2.id);
@@ -733,7 +782,9 @@ describe("Project Route tests", () => {
             // Email
             response = await Request(app).get("/api/ProjectRoute?sort=-email");
             status = response.status;
-            body = response.body;
+            body = response.body as JsonApiMultipleResoucesResponse<
+                ProjectResponseType
+            >;
             expect(status).toBe(200);
             expect(body.data[0].id).toEqual(product1.id);
             expect(body.data[1].id).toEqual(product3.id);
@@ -744,7 +795,9 @@ describe("Project Route tests", () => {
                 "/api/ProjectRoute?sort=-teamSize"
             );
             status = response.status;
-            body = response.body;
+            body = response.body as JsonApiMultipleResoucesResponse<
+                ProjectResponseType
+            >;
             expect(status).toBe(200);
             expect(body.data[0].id).toEqual(product3.id);
             expect(body.data[1].id).toEqual(product1.id);
@@ -756,7 +809,9 @@ describe("Project Route tests", () => {
                 "/api/ProjectRoute?sort=-endDate,name"
             );
             let status = response.status;
-            let body = response.body;
+            let body = response.body as JsonApiMultipleResoucesResponse<
+                ProjectResponseType
+            >;
             expect(status).toBe(200);
             expect(body.data[0].id).toEqual(product1.id);
             expect(body.data[1].id).toEqual(product3.id);
@@ -766,7 +821,9 @@ describe("Project Route tests", () => {
                 "/api/ProjectRoute?sort=-endDate,-name"
             );
             status = response.status;
-            body = response.body;
+            body = response.body as JsonApiMultipleResoucesResponse<
+                ProjectResponseType
+            >;
             expect(body.data[0].id).toEqual(product1.id);
             expect(body.data[1].id).toEqual(product2.id);
             expect(body.data[2].id).toEqual(product3.id);
@@ -777,7 +834,9 @@ describe("Project Route tests", () => {
                 "/api/ProjectRoute?sort=-endDate,name&pageSize=2&page=0"
             );
             let status = response.status;
-            let body = response.body;
+            let body = response.body as JsonApiMultipleResoucesResponse<
+                ProjectResponseType
+            >;
             expect(status).toBe(200);
             expect(body.data.length).toEqual(2);
             expect(body.data[0].id).toEqual(product1.id);
@@ -787,7 +846,9 @@ describe("Project Route tests", () => {
                 "/api/ProjectRoute?sort=-endDate,name&pageSize=2&page=1"
             );
             status = response.status;
-            body = response.body;
+            body = response.body as JsonApiMultipleResoucesResponse<
+                ProjectResponseType
+            >;
             expect(status).toBe(200);
             expect(body.data.length).toEqual(1);
             expect(body.data[0].id).toEqual(product2.id);

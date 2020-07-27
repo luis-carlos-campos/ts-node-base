@@ -1,4 +1,4 @@
-import ErrorResponse from "../type/response/ErrorResponse";
+import JsonApiErrorResponse from "../type/response/json-api/JsonApiErrorResponse";
 import RequestError from "../errors/ServerError";
 import MultipleValidationError from "../errors/MultipleValidationError";
 
@@ -10,9 +10,7 @@ class ResponseUtil {
      * Creates an error response
      * @param error - Error object for creating response.
      */
-    static createErrorResponse(
-        error: RequestError
-    ): ErrorResponse | ErrorResponse[] {
+    static createErrorResponse(error: RequestError): JsonApiErrorResponse {
         if (error instanceof MultipleValidationError) {
             return ResponseUtil.createMultipleErrorResponse(error);
         }
@@ -25,16 +23,17 @@ class ResponseUtil {
      */
     private static createMultipleErrorResponse(
         error: MultipleValidationError
-    ): ErrorResponse[] {
+    ): JsonApiErrorResponse {
         const { name, statusCode, attributeErrors } = error;
-        const errors: ErrorResponse[] = [];
+        const errors: JsonApiErrorResponse = [];
         attributeErrors.forEach((attrError) => {
-            const { constraints, property, value } = attrError;
+            const { constraints, property } = attrError;
             if (constraints) {
+                const value = attrError.value as unknown;
                 Object.values(constraints).forEach((reason) => {
                     errors.push({
                         status: statusCode,
-                        title: `${name}: ${property} = ${value}`,
+                        title: `${name}: ${property} = ${String(value)}`,
                         detail: reason,
                     });
                 });
@@ -49,7 +48,7 @@ class ResponseUtil {
      */
     private static createSingleErrorResponse(
         error: RequestError
-    ): ErrorResponse {
+    ): JsonApiErrorResponse {
         const { message, name, statusCode } = error;
         return {
             status: statusCode,

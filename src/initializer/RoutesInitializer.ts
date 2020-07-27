@@ -42,13 +42,22 @@ class RoutesInitializer implements Runnable {
             }
 
             // Mount router
-            const routeToBeCreated: unknown = new (
-                await import(routeFile)
-            ).default();
+
+            // Can not predict import.
+            /* eslint-disable */
+            const routeToBeCreated = new (await import(routeFile)).default();
+            /* eslint-enable */
+
             if (routeToBeCreated instanceof AbstractRoute) {
+                const customRouteName = Reflect.get(
+                    routeToBeCreated,
+                    "routeName"
+                ) as unknown;
                 const routeName =
-                    Reflect.get(routeToBeCreated, "routeName") ||
-                    fileWithoutSufix;
+                    customRouteName && typeof customRouteName === "string"
+                        ? customRouteName
+                        : fileWithoutSufix;
+
                 router.use(`/${routeName}`, routeToBeCreated.router);
                 routeToBeCreated.setupRoutes();
                 logger.debug(`${routeName} route created.`);
@@ -71,13 +80,13 @@ class RoutesInitializer implements Runnable {
                 let statusCode: HttpStatusCode =
                     HttpStatusCode.INTERNAL_SERVER_ERROR;
                 let response;
+                const { name, message, stack } = err;
                 if (err instanceof ServerError) {
                     statusCode = err.statusCode;
                     logger.error("Error raised inside Server code");
                     response = ResponseUtil.createErrorResponse(err);
                 } else {
                     logger.error("Unknown Error raised inside Server code");
-                    const { name, message } = err;
                     response = ResponseUtil.createErrorResponse({
                         statusCode,
                         name,
@@ -85,13 +94,15 @@ class RoutesInitializer implements Runnable {
                     });
                 }
                 logger.error(`Error Code: ${statusCode}`);
-                logger.error(`Error Name: ${err.name}`);
-                logger.error(`Error Message: ${err.message}`);
-                logger.error(`Error Stack\n
-                "************************* START STACK *************************\n
-                ${err.stack}\n
-                *************************   END STACK  *************************
-                `);
+                logger.error(`Error Name: ${name}`);
+                logger.error(`Error Message: ${message}`);
+                if (stack) {
+                    logger.error(`Error Stack\n
+                    "************************* START STACK *************************\n
+                    ${stack}\n
+                    *************************   END STACK  *************************
+                    `);
+                }
                 res.status(statusCode).json(response);
             }
         );

@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import { Repository, EntityManager } from "typeorm";
+import { Request } from "express";
+import { Repository } from "typeorm";
 import EntityNotFoundError from "../errors/EntityNotFoundError";
 import { validate } from "class-validator";
 import MultipleValidationError from "../errors/MultipleValidationError";
@@ -13,35 +13,23 @@ abstract class CrudController<T, RT> extends AbstractController {
     /**
      * Create a <T> element.
      * @param req: express.Request.
-     * @param res: express.Response.
-     * @param next: express.NextFunction
      * @returns Created <T> element.
      */
-    async create(
-        req: Request,
-        _res: Response,
-        _next: NextFunction
-    ): Promise<RT> {
+    create = async (req: Request): Promise<RT> => {
         const newEntity = new this.entity(req.body);
         await this._validate(newEntity);
         const repository: Repository<T> = this.entityManager.getRepository(
             this.entity
         );
         return this.responseParser(await repository.save(newEntity));
-    }
+    };
 
     /**
      * Finds all T elements.
      * @param req: express.Request.
-     * @param res: express.Response.
-     * @param next: express.NextFunction
      * @returns List of <T> elements.
      */
-    async findAll(
-        req: Request,
-        _res: Response,
-        _next: NextFunction
-    ): Promise<RT[]> {
+    findAll = async (req: Request): Promise<RT[]> => {
         const page = Number(req.query.page);
         const pageSize = Number(req.query.pageSize);
         const { maxRequestItems } = ConfigUtil.getServerConfigs();
@@ -77,20 +65,14 @@ abstract class CrudController<T, RT> extends AbstractController {
             order,
         });
         return entities.map((entity) => this.responseParser(entity));
-    }
+    };
 
     /**
      * Finds a <T> element by its primary key.
      * @param req: express.Request.
-     * @param res: express.Response.
-     * @param next: express.NextFunction
      * @returns <T> element.
      */
-    async _findByPk(
-        req: Request,
-        _res: Response,
-        _next: NextFunction
-    ): Promise<T> {
+    _findByPk = async (req: Request): Promise<T> => {
         const id = req.params.id;
         const repository: Repository<T> = this.entityManager.getRepository(
             this.entity
@@ -100,34 +82,26 @@ abstract class CrudController<T, RT> extends AbstractController {
             return entityFound;
         }
         throw new EntityNotFoundError(id);
-    }
+    };
 
     /**
      * Finds a <T> element by its primary key.
      * @param req: express.Request.
-     * @param res: express.Response.
-     * @param next: express.NextFunction
      * @returns <RT> Response Type.
      */
-    async findByPk(
-        req: Request,
-        res: Response,
-        next: NextFunction
-    ): Promise<RT> {
-        const entityFound = await this._findByPk(req, res, next);
+    findByPk = async (req: Request): Promise<RT> => {
+        const entityFound = await this._findByPk(req);
         return this.responseParser(entityFound);
-    }
+    };
 
     /**
      * Saves a <T> element.
      * @param req: express.Request.
-     * @param res: express.Response.
-     * @param next: express.NextFunction
      * @returns <RT> Response Type.
      */
-    async save(req: Request, res: Response, next: NextFunction): Promise<RT> {
+    save = async (req: Request): Promise<RT> => {
         const updatedEntity = new this.entity({
-            ...(await this._findByPk(req, res, next)),
+            ...(await this._findByPk(req)),
             ...req.body,
         });
         await this._validate(updatedEntity);
@@ -135,18 +109,16 @@ abstract class CrudController<T, RT> extends AbstractController {
             this.entity
         );
         return this.responseParser(await repository.save(updatedEntity));
-    }
+    };
 
     /**
      * Removes a <T> element.
      * @param req: express.Request.
-     * @param res: express.Response.
-     * @param next: express.NextFunction
      * @param manager: TypeORM transactional entity manager
      * @returns <RT> Response Type.
      */
-    async remove(req: Request, res: Response, next: NextFunction): Promise<RT> {
-        const entityFound = await this._findByPk(req, res, next);
+    remove = async (req: Request): Promise<RT> => {
+        const entityFound = await this._findByPk(req);
         const repository: Repository<T> = this.entityManager.getRepository(
             this.entity
         );
@@ -155,7 +127,7 @@ abstract class CrudController<T, RT> extends AbstractController {
         const response = this.responseParser(entityFound);
         await repository.remove(entityFound);
         return response;
-    }
+    };
 
     protected abstract responseParser(entity: T): RT;
 
@@ -165,14 +137,14 @@ abstract class CrudController<T, RT> extends AbstractController {
      * @param requiredFields - Request required field list.
      * @param allowedFields - Request allowed field list.
      */
-    private async _validate(entity: T): Promise<void> {
+    private _validate = async (entity: T): Promise<void> => {
         const errors = await validate(entity, {
             validationError: { target: false },
         });
         if (errors.length) {
             throw new MultipleValidationError(errors);
         }
-    }
+    };
 }
 
 export default CrudController;

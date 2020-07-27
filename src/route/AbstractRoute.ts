@@ -1,23 +1,24 @@
-import express, { Router } from "express";
+import express, { Request, Response, Router, NextFunction } from "express";
 import RouteMethod from "../type/RouteMethod";
 import { Logger } from "winston";
 import LoggerService from "../util/LoggerUtil";
-import { getConnection } from "typeorm";
+import { getConnection, EntityManager } from "typeorm";
 import NotImplementedError from "../errors/NotImplementedError";
 import AbstractController from "../controller/AbstractController";
+import JsonApiResponse from "../type/response/json-api/JsonApiResponse";
 
 /**
  * This Route is meant to be extended by all other routes.
  * It'll provide error handling and transactional entity manager
  */
-abstract class AbstractRoute<C extends AbstractController> {
+abstract class AbstractRoute<C extends AbstractController, RT> {
     protected abstract allowedRouteMethods: RouteMethod[];
-    protected controller: C;
+    protected controller: new (entityManager: EntityManager) => C;
     protected logger: Logger = LoggerService.getLogger("AbstractRoute");
     protected _router: Router;
 
-    constructor(readonly controllerT: new () => C) {
-        this.controller = new controllerT();
+    constructor(readonly controllerT: new (entityManager: EntityManager) => C) {
+        this.controller = controllerT;
         this._router = express.Router({ mergeParams: true });
     }
 
@@ -38,11 +39,17 @@ abstract class AbstractRoute<C extends AbstractController> {
                     await queryRunner.startTransaction();
 
                     try {
-                        // We can not tell which methods this controller so
-                        // eslint-disable-next-line
-                        const controller: any = this.controller;
-                        const methodToBeCalled: unknown =
-                            controller[methodName];
+                        const controller: C = new this.controller(
+                            queryRunner.manager
+                        );
+                        const methodToBeCalled = Reflect.get(
+                            controller,
+                            methodName
+                        ) as (
+                            req: Request,
+                            res: Response,
+                            next: NextFunction
+                        ) => RT | Promise<RT> | RT[] | Promise<RT[]>;
                         if (
                             !methodToBeCalled ||
                             typeof methodToBeCalled !== "function"
@@ -51,22 +58,18 @@ abstract class AbstractRoute<C extends AbstractController> {
                                 `Method ${methodName} was not implemented in controller class`
                             );
                         }
-                        this.controller.entityManager = queryRunner.manager;
-                        const response = await controller[methodName](
-                            req,
-                            res,
-                            next
-                        );
+                        const data = await methodToBeCalled(req, res, next);
 
                         // Commiting transaction
                         await queryRunner.commitTransaction();
 
-                        res.status(standardCode).send({
+                        const response: JsonApiResponse<RT | RT[]> = {
                             links: {
                                 self: `${req.protocol}://${req.hostname}${req.originalUrl}`,
                             },
-                            data: response,
-                        });
+                            data,
+                        };
+                        res.status(standardCode).send(response);
                     } catch (e) {
                         // Rolling back changes
                         await queryRunner.rollbackTransaction();

@@ -12,7 +12,7 @@ abstract class AbstractCrudRoute<
     T,
     RT,
     C extends AbstractCrudController<T, RT>
-> extends AbstractRoute<C> {
+> extends AbstractRoute<C, RT> {
     protected allowedRouteMethods = [
         {
             httpMethod: HttpMethod.GET,

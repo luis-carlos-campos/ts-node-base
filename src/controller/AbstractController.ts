@@ -8,14 +8,14 @@ abstract class AbstractController {
     /**
      * TypeORM transactional entity manager
      */
-    private _entityManager!: EntityManager;
+    private readonly _entityManager: EntityManager;
+
+    constructor(entityManager: EntityManager) {
+        this._entityManager = entityManager;
+    }
 
     get entityManager(): EntityManager {
         return this._entityManager;
-    }
-
-    set entityManager(entityManager: EntityManager) {
-        this._entityManager = entityManager;
     }
 }
 
