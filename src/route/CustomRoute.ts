@@ -1,11 +1,11 @@
-import AbstractRoute from "./AbstractRoute";
+import AbstractCrudRoute from "./AbstractCrudRoute";
 import Project from "../entity/Project";
 import ProjectController from "../controller/ProjectController";
 import ProjectResponseType from "../type/response/entity/ProjectResponseType";
 import CustomRouteName from "../decorator/CustomRouteNameDecorator";
 
 @CustomRouteName("custom")
-class CustomRoute extends AbstractRoute<
+class ProjectRoute extends AbstractCrudRoute<
     Project,
     ProjectResponseType,
     ProjectController
@@ -15,4 +15,4 @@ class CustomRoute extends AbstractRoute<
     }
 }
 
-export default CustomRoute;
+export default ProjectRoute;

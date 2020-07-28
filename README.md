@@ -9,6 +9,7 @@
       - [Database](#database)
       - [Database Migration](#database-migration)
       - [Generic CRUDs](#generic-cruds)
+        - [Custom Route Name](#custom-route-name)
         - [Validation](#validation)
         - [Pagination](#pagination)
         - [Sorting](#sorting)
@@ -18,6 +19,7 @@
       - [Tests](#tests)
   - [Getting started](#getting-started)
   - [Building](#building)
+  - [Cleaning up](#cleaning-up)
   - [TODO List](#todo-list)
   - [Issues/New features](#issuesnew-features)
 
@@ -109,7 +111,7 @@ For reverting, run:
 
 #### Generic CRUDs
 This project enables out-of-the-box CRUDS.
-This is possible due to AbstractController and AbstractRoute.
+This is possible due to AbstractCrudController and AbstractCrudRoute.
 If you do not need this functionality or do not want to use it, you can remove these files.
 
 In order to create a new CRUD you must do the following:
@@ -118,13 +120,13 @@ In order to create a new CRUD you must do the following:
    1. Add annotations for both TypeORM and class-validator.
 2. Create a new Response Type (under /src/type/response/entity/)
 3. Create a new controller (under /src/controller/)
-   1. This controller must extend AbstractController
-   2. You must provide your new entity/response type to AbstractController
+   1. This controller must extend AbstractCrudController
+   2. You must provide your new entity/response type to AbstractCrudController
    3. Implement responseParser.
    4. Check ProjectController for more details
 4. Create a new route (under /src/route)
-   1. This route must extend AbstractRoute
-   2. You must provide your new entity/response type/controller to AbstractRoute
+   1. This route must extend AbstractCrudRoute
+   2. You must provide your new entity/response type/controller to AbstractCrudRoute
 
 CRUD will create the following endpoints: (i.e. New Route file name = UserRoute.ts)
 
@@ -261,6 +263,16 @@ Compiled code will be available under $ROOT_DIR/dist/
 You can also start the production version by running:
 
     npm run start:prod
+
+## Cleaning up
+
+In order to remove all the examples you can run
+
+    npm run boilerplate:cleanup
+
+If you want to remove all the examples and the Generic CRUD functionality you can run:
+
+    npm run boilerplate:crud-cleanup
 
 ## TODO List
 Add filtering for CRUDs

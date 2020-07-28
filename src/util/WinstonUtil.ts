@@ -4,6 +4,7 @@ import ConfigService from "./ConfigUtil";
 import Winston from "winston";
 import WinstonDailyRotateFile from "Winston-daily-rotate-file";
 import EnvVariablesUtil from "./EnvVariablesUtil";
+import InternalServerError from "../errors/InternalServerError";
 
 /**
  * Winston utillity class
@@ -65,10 +66,15 @@ class WinstonUtil {
             Winston.format.timestamp({
                 format: timestampFormat,
             }),
-            Winston.format.printf(
-                (info) =>
-                    `${info.timestamp} ${process.pid} [${info.label}] \t${info.level}: ${info.message}`
-            )
+            Winston.format.printf((info) => {
+                const { message, level, timestamp } = info;
+                if (timestamp && typeof timestamp === "string") {
+                    return `${timestamp} ${process.pid} [${module}] \t${level}: ${message}`;
+                }
+                throw new InternalServerError(
+                    "Winston did not set up timestamp."
+                );
+            })
         );
     }
 

@@ -1,10 +1,10 @@
 /**
  * Custom Type for HTTP Error responses.
  */
-type ErrorResponse = {
+type JsonApiSingleErrorResponse = {
     status: number;
     title: string;
     detail: string;
 };
 
-export default ErrorResponse;
+export default JsonApiSingleErrorResponse;

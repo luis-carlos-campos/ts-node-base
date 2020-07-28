@@ -1,9 +1,9 @@
-import AbstractRoute from "./AbstractRoute";
+import AbstractCrudRoute from "./AbstractCrudRoute";
 import Project from "../entity/Project";
 import ProjectController from "../controller/ProjectController";
 import ProjectResponseType from "../type/response/entity/ProjectResponseType";
 
-class ProjectRoute extends AbstractRoute<
+class ProjectRoute extends AbstractCrudRoute<
     Project,
     ProjectResponseType,
     ProjectController

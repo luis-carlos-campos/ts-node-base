@@ -1,8 +1,8 @@
-import AbstractController from "./AbstractController";
+import AbstractCrudController from "./AbstractCrudController";
 import Project from "../entity/Project";
 import ProjectResponseType from "../type/response/entity/ProjectResponseType";
 
-class ProjectController extends AbstractController<
+class ProjectController extends AbstractCrudController<
     Project,
     ProjectResponseType
 > {
