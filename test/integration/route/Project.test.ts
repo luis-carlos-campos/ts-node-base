@@ -1,14 +1,14 @@
-import ServerInitializer from "../src/initializer/ServerInitializer";
+import ServerInitializer from "../../../src/initializer/ServerInitializer";
 import Request from "supertest";
 import { Application } from "express";
 import { getConnection, getRepository } from "typeorm";
-import Project from "../src/entity/Project";
-import ProjectResponseType from "../src/type/response/entity/ProjectResponseType";
+import Project from "../../../src/entity/Project";
+import ProjectResponseType from "../../../src/type/response/entity/ProjectResponseType";
 import moment from "moment";
-import JsonApiSingleResouceResponse from "../src/type/response/json-api/JsonApiSingleResouceResponse";
-import JsonApiMultipleResoucesResponse from "../src/type/response/json-api/JsonApiMultipleResoucesResponse";
+import JsonApiSingleResouceResponse from "../../../src/type/response/json-api/JsonApiSingleResouceResponse";
+import JsonApiMultipleResoucesResponse from "../../../src/type/response/json-api/JsonApiMultipleResoucesResponse";
 
-describe("Project Route tests", () => {
+describe("Route: Project", () => {
     let app: Application;
 
     beforeAll(async () => {
@@ -34,7 +34,7 @@ describe("Project Route tests", () => {
     };
 
     describe("CRUD Operations", () => {
-        test("[GET] It should return a Project", async () => {
+        test("[GET]    /api/ProjectRoute/:id   ->   It should return a Project", async () => {
             // Creating a new project
             const project = await getRepository(Project).save({
                 ...newProject,
@@ -61,7 +61,7 @@ describe("Project Route tests", () => {
             });
         });
 
-        test("[POST] It should create a new Project", async () => {
+        test("[POST]   /api/ProjectRoute/      ->   It should create a new Project", async () => {
             // Creating a new project
             const response = await Request(app)
                 .post("/api/ProjectRoute/")
@@ -111,7 +111,7 @@ describe("Project Route tests", () => {
             }
         });
 
-        test("[PATCH] It should update a project", async () => {
+        test("[PATCH]  /api/ProjectRoute/:id   ->   It should update a project", async () => {
             // Creating a new project
             const project = await getRepository(Project).save({
                 ...newProject,
@@ -163,7 +163,7 @@ describe("Project Route tests", () => {
             }
         });
 
-        test("[DELETE] It should remove a project", async () => {
+        test("[DELETE] /api/ProjectRoute/:id   ->   It should remove a project", async () => {
             // Creating a new project
             const { id } = await getRepository(Project).save({ ...newProject });
 
@@ -192,7 +192,7 @@ describe("Project Route tests", () => {
             expect(removedProject).toBeUndefined();
         });
 
-        test("[GET] It should return a list of projects", async () => {
+        test("[GET]    /api/ProjectRoute/      ->   It should return a list of projects", async () => {
             // Dropping database
             await getRepository(Project).clear();
 
@@ -230,7 +230,7 @@ describe("Project Route tests", () => {
     });
 
     describe("Validation", () => {
-        test("It should an return an error whenever trying to update or remove an unknown element", async () => {
+        test("[PATCH]  /api/ProjectRoute/:id   ->   It should an return an error whenever trying to update or remove an unknown element", async () => {
             const expectedErrorCode = 404;
             const expectedResponse = {
                 status: expectedErrorCode,
@@ -259,7 +259,7 @@ describe("Project Route tests", () => {
             expect(body).toStrictEqual(expectedResponse);
         });
 
-        test("It should not allow the creation of a project without required fields", async () => {
+        test("[POST]   /api/ProjectRoute/:id   ->   It should not allow the creation of a project without required fields", async () => {
             const emptyProject = {};
 
             // Creating a new project
@@ -326,7 +326,7 @@ describe("Project Route tests", () => {
             ]);
         });
 
-        test("It should not allow the update of a project with invalid field values", async () => {
+        test("[PATCH]  /api/ProjectRoute/:id   ->   It should not allow the update of a project with invalid field values", async () => {
             // Creating a new project
             const { id } = await getRepository(Project).save({ ...newProject });
 
@@ -402,7 +402,8 @@ describe("Project Route tests", () => {
                 },
             ]);
         });
-        test("It should not allow sorting for an unkwon field", async () => {
+
+        test("[GET]    /api/ProjectRoute/      ->   It should not allow sorting for an unkwon field", async () => {
             const response = await Request(app).get(
                 "/api/ProjectRoute?sort=myUnknownField"
             );
@@ -430,7 +431,7 @@ describe("Project Route tests", () => {
             product3 = await getRepository(Project).save({ ...newProject });
         });
 
-        test("It should return results according to pageSize/page", async () => {
+        test("[GET]    /api/ProjectRoute/      ->   It should return results according to pageSize/page", async () => {
             const response = await Request(app).get(
                 "/api/ProjectRoute?pageSize=1&page=1"
             );
@@ -449,7 +450,7 @@ describe("Project Route tests", () => {
             });
         });
 
-        test("It should return everything whenever pageSize or page was not provided", async () => {
+        test("[GET]    /api/ProjectRoute/      ->   It should return everything whenever pageSize or page was not provided", async () => {
             let getResponse = await Request(app).get(
                 "/api/ProjectRoute?pageSize=1"
             );
@@ -498,7 +499,7 @@ describe("Project Route tests", () => {
             });
         });
 
-        test("It should return everything whenever pageSize or page is not a numeric value", async () => {
+        test("[GET]    /api/ProjectRoute/      ->   It should return everything whenever pageSize or page is not a numeric value", async () => {
             let getResponse = await Request(app).get(
                 "/api/ProjectRoute?pageSize=ABC&page=1"
             );
@@ -555,7 +556,7 @@ describe("Project Route tests", () => {
             });
         });
 
-        test("It should return everything whenever pageSize lower than 1", async () => {
+        test("[GET]    /api/ProjectRoute/      ->   It should return everything whenever pageSize lower than 1", async () => {
             const getResponse = await Request(app).get(
                 "/api/ProjectRoute?pageSize=0&page=1"
             );
@@ -584,7 +585,7 @@ describe("Project Route tests", () => {
             });
         });
 
-        test("It should return everything whenever page lower than 0", async () => {
+        test("[GET]    /api/ProjectRoute/      ->   It should return everything whenever page lower than 0", async () => {
             const getResponse = await Request(app).get(
                 "/api/ProjectRoute?pageSize=1&page=-1"
             );
@@ -650,7 +651,7 @@ describe("Project Route tests", () => {
             });
         });
 
-        test("It should return results according to sort provided", async () => {
+        test("[GET]    /api/ProjectRoute/      ->   It should return results according to sort provided", async () => {
             // Name
             let response = await Request(app).get(
                 "/api/ProjectRoute?sort=name"
@@ -726,7 +727,7 @@ describe("Project Route tests", () => {
             expect(body.data[2].id).toEqual(product3.id);
         });
 
-        test("It should allow descending sort whenever minus sign is provided", async () => {
+        test("[GET]    /api/ProjectRoute/      ->   It should allow descending sort whenever minus sign is provided", async () => {
             // Name
             let response = await Request(app).get(
                 "/api/ProjectRoute?sort=-name"
@@ -804,7 +805,7 @@ describe("Project Route tests", () => {
             expect(body.data[2].id).toEqual(product2.id);
         });
 
-        test("It should allow composite sorting whenever sort values is separated by commas", async () => {
+        test("[GET]    /api/ProjectRoute/      ->   It should allow composite sorting whenever sort values is separated by commas", async () => {
             let response = await Request(app).get(
                 "/api/ProjectRoute?sort=-endDate,name"
             );
@@ -829,7 +830,7 @@ describe("Project Route tests", () => {
             expect(body.data[2].id).toEqual(product3.id);
         });
 
-        test("It should work along with pagination", async () => {
+        test("[GET]    /api/ProjectRoute/      ->   It should work along with pagination", async () => {
             let response = await Request(app).get(
                 "/api/ProjectRoute?sort=-endDate,name&pageSize=2&page=0"
             );
