@@ -12,7 +12,7 @@ import JsonApiResponse from "../type/response/json-api/JsonApiResponse";
  * It'll provide error handling and transactional entity manager
  */
 abstract class AbstractRoute<C extends AbstractController, RT> {
-    protected abstract allowedRouteMethods: RouteMethod[];
+    protected abstract allowedRouteMethods: RouteMethod<C>[];
     protected controller: new (entityManager: EntityManager) => C;
     protected logger: Logger = LoggerService.getLogger("AbstractRoute");
     protected _router: Router;
@@ -55,7 +55,9 @@ abstract class AbstractRoute<C extends AbstractController, RT> {
                             typeof methodToBeCalled !== "function"
                         ) {
                             throw new NotImplementedError(
-                                `Method ${methodName} was not implemented in controller class`
+                                `Method ${String(
+                                    methodName
+                                )} was not implemented in controller class`
                             );
                         }
                         const data = await methodToBeCalled(req, res, next);

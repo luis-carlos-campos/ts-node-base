@@ -4,6 +4,7 @@ import { Logger } from "winston";
 import LoggerUtil from "../util/LoggerUtil";
 import HttpStatusCode from "../enum/HttpStatusCode";
 import AbstractRoute from "./AbstractRoute";
+import RouteMethod from "../type/RouteMethod";
 
 /**
  * This Route is meant to be extended whenever you want to create and endpoint with all basic CRUD operations.
@@ -13,7 +14,7 @@ abstract class AbstractCrudRoute<
     RT,
     C extends AbstractCrudController<T, RT>
 > extends AbstractRoute<C, RT> {
-    protected allowedRouteMethods = [
+    protected allowedRouteMethods: RouteMethod<C>[] = [
         {
             httpMethod: HttpMethod.GET,
             methodName: "findAll",
