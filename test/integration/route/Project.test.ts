@@ -1,12 +1,13 @@
 import ServerInitializer from "../../../src/initializer/ServerInitializer";
 import Request from "supertest";
 import { Application } from "express";
-import { getConnection, getRepository } from "typeorm";
+import { getRepository } from "typeorm";
 import Project from "../../../src/entity/Project";
 import ProjectResponseType from "../../../src/type/response/entity/ProjectResponseType";
 import moment from "moment";
 import JsonApiSingleResouceResponse from "../../../src/type/response/json-api/JsonApiSingleResouceResponse";
 import JsonApiMultipleResoucesResponse from "../../../src/type/response/json-api/JsonApiMultipleResoucesResponse";
+import TypeORMUtil from "../../../src/util/TypeORMUtil";
 
 describe("Route: Project", () => {
     let app: Application;
@@ -15,7 +16,7 @@ describe("Route: Project", () => {
         app = await ServerInitializer.getServer();
     });
     afterAll(async () => {
-        await getConnection().close();
+        await TypeORMUtil.closeConnection();
     });
 
     const newProject = {

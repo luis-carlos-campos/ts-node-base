@@ -72,10 +72,10 @@ abstract class AbstractRoute<C extends AbstractController, RT> {
                             data,
                         };
                         res.status(standardCode).send(response);
-                    } catch (e) {
+                    } catch (error) {
                         // Rolling back changes
                         await queryRunner.rollbackTransaction();
-                        next(e);
+                        next(error);
                     } finally {
                         // Releasing connection.
                         await queryRunner.release();

@@ -33,11 +33,14 @@ Boilerplate setup with:
  ![CB Versions Dropdown](server-architecture.png)
 
 **Route** tier takes care of:
-- Redirecting incoming requests to the expected controller
-- Handling responses
+- Redirecting incoming requests to the expected controller.
+- Handling responses to client.
 
 **Controller** tier takes care of:
-- Applying business rules
+- Receiving requisitions from Routes.
+- Applying business rules.
+- Interacting with Repository tier.
+- Returning data to Routes.
 
 **Repository** tier takes care of:
 - Acessing database

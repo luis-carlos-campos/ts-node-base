@@ -15,7 +15,7 @@
         "migration:generate": "ts-node -P src/tsconfig.json ./node_modules/.bin/typeorm migration:generate --config src/config/TypeORMConfig",
         "db:drop": "ts-node -P src/tsconfig.json ./node_modules/.bin/typeorm schema:drop --config src/config/TypeORMConfig",
         "db:reset": "npm run db:drop && npm run migration:apply",
-        "boilerplate:cleanup": "rimraf ./src/controller/ProjectController.ts ./src/entity/Project.ts ./src/migration/1589423633834-InitialMigration.ts ./src/route/ProjectRoute.ts ./src/route/CustomRoute.ts ./src/type/response/entity/ProjectResponseType.ts ./test/Project.test.ts",
+        "boilerplate:cleanup": "rimraf ./src/controller/ProjectController.ts ./src/entity/Project.ts ./src/migration/1589423633834-InitialMigration.ts ./src/route/ProjectRoute.ts ./src/route/CustomRoute.ts ./src/type/response/entity/ProjectResponseType.ts ./test/integration/route/Project.test.ts",
         "boilerplate:crud-cleanup": "npm run boilerplate:cleanup && rimraf ./src/route/AbstractCrudRoute.ts ./src/controller/AbstractCrudController.ts"
     },
     "repository": {
