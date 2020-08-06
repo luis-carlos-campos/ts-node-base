@@ -1,10 +1,10 @@
 import { Request } from "express";
 import { Repository } from "typeorm";
-import EntityNotFoundError from "../errors/EntityNotFoundError";
+import EntityNotFoundError from "@error/EntityNotFoundError";
 import { validate } from "class-validator";
-import MultipleValidationError from "../errors/MultipleValidationError";
-import ConfigUtil from "../util/ConfigUtil";
-import AbstractController from "./AbstractController";
+import MultipleValidationError from "@error/MultipleValidationError";
+import ConfigUtil from "@util/ConfigUtil";
+import AbstractController from "@controller/AbstractController";
 
 abstract class CrudController<T, RT> extends AbstractController {
     // Properties that must be overwritten by Sub class.

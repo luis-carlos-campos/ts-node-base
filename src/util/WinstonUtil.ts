@@ -1,10 +1,10 @@
 import { ConsoleTransportInstance } from "winston/lib/winston/transports";
 import { Format } from "logform";
-import ConfigService from "./ConfigUtil";
 import Winston from "winston";
 import WinstonDailyRotateFile from "Winston-daily-rotate-file";
-import EnvVariablesUtil from "./EnvVariablesUtil";
-import InternalServerError from "../errors/InternalServerError";
+import ConfigService from "@util/ConfigUtil";
+import EnvVariablesUtil from "@util/EnvVariablesUtil";
+import InternalServerError from "@error/InternalServerError";
 
 /**
  * Winston utillity class

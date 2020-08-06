@@ -1,13 +1,13 @@
-import ServerInitializer from "../../../src/initializer/ServerInitializer";
+import ServerInitializer from "@initializer/ServerInitializer";
 import Request from "supertest";
 import { Application } from "express";
 import { getRepository } from "typeorm";
-import Project from "../../../src/entity/Project";
-import ProjectResponseType from "../../../src/type/response/entity/ProjectResponseType";
+import Project from "@entity/Project";
+import ProjectResponseType from "@type/response/entity/ProjectResponseType";
 import moment from "moment";
-import JsonApiSingleResouceResponse from "../../../src/type/response/json-api/JsonApiSingleResouceResponse";
-import JsonApiMultipleResoucesResponse from "../../../src/type/response/json-api/JsonApiMultipleResoucesResponse";
-import TypeORMUtil from "../../../src/util/TypeORMUtil";
+import JsonApiSingleResouceResponse from "@type/response/json-api/JsonApiSingleResouceResponse";
+import JsonApiMultipleResoucesResponse from "@type/response/json-api/JsonApiMultipleResoucesResponse";
+import TypeORMUtil from "@util/TypeORMUtil";
 
 describe("Route: Project", () => {
     let app: Application;

@@ -1,8 +1,9 @@
-import ServerInitializer from "./initializer/ServerInitializer";
-import ConfigUtil from "./util/ConfigUtil";
+require("module-alias/register");
 import { Server } from "http";
-import TypeORMUtil from "./util/TypeORMUtil";
-import LoggerUtil from "./util/LoggerUtil";
+import ServerInitializer from "@initializer/ServerInitializer";
+import ConfigUtil from "@util/ConfigUtil";
+import LoggerUtil from "@util/LoggerUtil";
+import TypeORMUtil from "@util/TypeORMUtil";
 
 const logger = LoggerUtil.getLogger("Index");
 

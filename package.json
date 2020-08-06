@@ -4,24 +4,32 @@
     "description": "Base project for node/typescript applications",
     "main": "./src/index.ts",
     "scripts": {
-        "build": "rimraf ./dist && tsc --build src",
-        "lint": "eslint . --ext .ts",
-        "lint:fix": "eslint --fix . --ext .ts",
+        "build": "rimraf ./dist && tsc --p tsconfig-build.json",
+        "lint": "eslint ./src ./test --ext .ts",
+        "lint:fix": "eslint ./src ./test --ext .ts --fix",
+        "style:check": "prettier --check 'src/**/*/*.ts' 'test/**/*/*.ts'",
+        "style:fix": "prettier --write 'src/**/*.ts' 'test/**/*.ts'",
         "start:dev": "nodemon",
         "start:prod": "npm run build && node ./dist/index.js",
-        "test": "NODE_ENV=test npm run db:reset && jest --runInBand",
-        "migration:apply": "ts-node -P src/tsconfig.json ./node_modules/.bin/typeorm migration:run --config src/config/TypeORMConfig",
-        "migration:revert": "ts-node -P src/tsconfig.json ./node_modules/.bin/typeorm migration:revert --config src/config/TypeORMConfig",
-        "migration:generate": "ts-node -P src/tsconfig.json ./node_modules/.bin/typeorm migration:generate --config src/config/TypeORMConfig",
-        "db:drop": "ts-node -P src/tsconfig.json ./node_modules/.bin/typeorm schema:drop --config src/config/TypeORMConfig",
+        "test": "jest",
+        "test:functional": "NODE_ENV=test npm run db:reset && jest --projects ./test --runInBand",
+        "migration:apply": "ts-node -r tsconfig-paths/register -P tsconfig.json ./node_modules/.bin/typeorm migration:run --config src/config/TypeORMConfig",
+        "migration:revert": "ts-node -r tsconfig-paths/register -P tsconfig.json ./node_modules/.bin/typeorm migration:revert --config src/config/TypeORMConfig",
+        "migration:generate": "ts-node -r tsconfig-paths/register -P tsconfig.json ./node_modules/.bin/typeorm migration:generate --config src/config/TypeORMConfig",
+        "db:drop": "ts-node -r tsconfig-paths/register -P tsconfig.json ./node_modules/.bin/typeorm schema:drop --config src/config/TypeORMConfig",
         "db:reset": "npm run db:drop && npm run migration:apply",
-        "boilerplate:cleanup": "rimraf ./src/controller/ProjectController.ts ./src/entity/Project.ts ./src/migration/1589423633834-InitialMigration.ts ./src/route/ProjectRoute.ts ./src/route/CustomRoute.ts ./src/type/response/entity/ProjectResponseType.ts ./test/integration/route/Project.test.ts",
+        "boilerplate:cleanup": "rimraf ./src/controller/ProjectController.ts ./src/entity/Project.ts ./src/migration/1589423633834-InitialMigration.ts ./src/route/ProjectRoute.ts ./src/route/CustomRoute.ts ./src/type/response/entity/ProjectResponseType.ts ./test/functional/Project.test.ts",
         "boilerplate:crud-cleanup": "npm run boilerplate:cleanup && rimraf ./src/route/AbstractCrudRoute.ts ./src/controller/AbstractCrudController.ts"
     },
     "repository": {
         "type": "git",
         "url": "git+https://github.pie.apple.com/venturus/ts-node-base.git"
     },
+    "keywords": [
+        "node",
+        "nodejs",
+        "typescript"
+    ],
     "author": "Luís Carlos Campos",
     "license": "ISC",
     "bugs": {
@@ -32,6 +40,7 @@
         "@types/compression": "1.7.0",
         "@types/express": "4.17.7",
         "@types/jest": "25.2.1",
+        "@types/module-alias": "2.0.0",
         "@types/morgan": "1.9.1",
         "@types/node": "14.0.26",
         "@types/supertest": "2.0.10",
@@ -51,12 +60,14 @@
         "supertest": "4.0.2",
         "ts-jest": "26.1.3",
         "ts-node": "8.10.1",
+        "tsconfig-paths": "3.9.0",
         "typescript": "3.9.7"
     },
     "dependencies": {
         "class-validator": "0.12.2",
         "compression": "1.7.4",
         "express": "4.17.1",
+        "module-alias": "2.2.2",
         "moment": "2.27.0",
         "morgan": "1.10.0",
         "mysql2": "2.1.0",
@@ -76,6 +87,21 @@
         "*.{js,ts}": [
             "npm run lint"
         ]
+    },
+    "_moduleAliases": {
+        "@src": "./dist/",
+        "@config": "./dist/config/",
+        "@controller": "./dist/controller/",
+        "@decorator": "./dist/decorator/",
+        "@entity": "./dist/entity/",
+        "@enum": "./dist/enum/",
+        "@error": "./dist/error/",
+        "@initializer": "./dist/initializer/",
+        "@interface": "./dist/interface/",
+        "@migration": "./dist/migration/",
+        "@route": "./dist/route/",
+        "@type": "./dist/type/",
+        "@util": "./dist/util/"
     },
     "engines": {
         "node": ">=14.1.0"

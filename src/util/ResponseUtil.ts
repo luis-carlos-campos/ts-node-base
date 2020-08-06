@@ -1,6 +1,6 @@
-import JsonApiErrorResponse from "../type/response/json-api/JsonApiErrorResponse";
-import RequestError from "../errors/ServerError";
-import MultipleValidationError from "../errors/MultipleValidationError";
+import JsonApiErrorResponse from "@type/response/json-api/JsonApiErrorResponse";
+import RequestError from "@error/ServerError";
+import MultipleValidationError from "@error/MultipleValidationError";
 
 /**
  * Utillity class for creating responses.

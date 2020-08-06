@@ -1,4 +1,4 @@
-import ConfigUtil from "../util/ConfigUtil";
+import ConfigUtil from "@util/ConfigUtil";
 import { ConnectionOptions } from "typeorm";
 const {
     database,

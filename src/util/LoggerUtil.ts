@@ -1,6 +1,6 @@
 import Winston, { Logger } from "winston";
-import WinstonUtils from "./WinstonUtil";
-import ConfigService from "./ConfigUtil";
+import WinstonUtils from "@util/WinstonUtil";
+import ConfigService from "@util/ConfigUtil";
 
 /**
  * Utillity class for logging

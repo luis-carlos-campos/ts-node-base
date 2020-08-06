@@ -1,10 +1,10 @@
-import AbstractCrudController from "../controller/AbstractCrudController";
-import HttpMethod from "../enum/HttpMethod";
+import AbstractCrudController from "@controller/AbstractCrudController";
+import HttpMethod from "@enum/HttpMethod";
 import { Logger } from "winston";
-import LoggerUtil from "../util/LoggerUtil";
-import HttpStatusCode from "../enum/HttpStatusCode";
-import AbstractRoute from "./AbstractRoute";
-import RouteMethod from "../type/RouteMethod";
+import LoggerUtil from "@util/LoggerUtil";
+import HttpStatusCode from "@enum/HttpStatusCode";
+import AbstractRoute from "@route/AbstractRoute";
+import RouteMethod from "@type/RouteMethod";
 
 /**
  * This Route is meant to be extended whenever you want to create and endpoint with all basic CRUD operations.

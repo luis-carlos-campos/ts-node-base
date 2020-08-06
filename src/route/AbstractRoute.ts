@@ -1,11 +1,11 @@
 import express, { Request, Response, Router, NextFunction } from "express";
-import RouteMethod from "../type/RouteMethod";
+import RouteMethod from "@type/RouteMethod";
 import { Logger } from "winston";
-import LoggerService from "../util/LoggerUtil";
+import LoggerService from "@util/LoggerUtil";
 import { getConnection, EntityManager } from "typeorm";
-import NotImplementedError from "../errors/NotImplementedError";
-import AbstractController from "../controller/AbstractController";
-import JsonApiResponse from "../type/response/json-api/JsonApiResponse";
+import NotImplementedError from "@error/NotImplementedError";
+import AbstractController from "@controller/AbstractController";
+import JsonApiResponse from "@type/response/json-api/JsonApiResponse";
 
 /**
  * This Route is meant to be extended by all other routes.

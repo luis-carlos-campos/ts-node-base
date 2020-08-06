@@ -1,10 +1,10 @@
-import LoggerConfigFileOptions from "../type/config/LoggerConfigFileOptions";
-import LoggerConfig from "../config/LoggerConfig";
-import EnvVariablesUtil from "./EnvVariablesUtil";
-import DBConfigFileOptions from "../type/config/DBConfigFileOptions";
-import DBConfig from "../config/DBConfig";
-import ServerConfigFileOptions from "../type/config/ServerConfigFileOptions";
-import ServerConfig from "../config/ServerConfig";
+import LoggerConfigFileOptions from "@type/config/LoggerConfigFileOptions";
+import LoggerConfig from "@config/LoggerConfig";
+import EnvVariablesUtil from "@util/EnvVariablesUtil";
+import DBConfigFileOptions from "@type/config/DBConfigFileOptions";
+import DBConfig from "@config/DBConfig";
+import ServerConfigFileOptions from "@type/config/ServerConfigFileOptions";
+import ServerConfig from "@config/ServerConfig";
 
 /**
  * Utillity for getting config files

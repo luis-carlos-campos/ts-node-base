@@ -1,5 +1,5 @@
-import RequestError from "./ServerError";
-import HttpStatusCode from "../enum/HttpStatusCode";
+import RequestError from "@error/ServerError";
+import HttpStatusCode from "@enum/HttpStatusCode";
 
 class EntityNotFoundError extends RequestError {
     constructor(readonly entityId: string) {

@@ -1,4 +1,4 @@
-import JsonApiSingleErrorResponse from "./JsonApiSingleErrorResponse";
+import JsonApiSingleErrorResponse from "@type/response/json-api/JsonApiSingleErrorResponse";
 /**
  * Custom Type for HTTP Error responses.
  */

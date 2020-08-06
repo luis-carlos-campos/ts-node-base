@@ -2,12 +2,12 @@
  * Load all routes from current directory into express app.
  */
 import { Application } from "express";
-import Runnable from "../interface/StartUpRunnable";
+import Runnable from "@interface/StartUpRunnable";
 import Morgan, { StreamOptions } from "morgan";
 import Winston from "winston";
-import WinstonUtils from "../util/WinstonUtil";
-import LoggerUtil from "../util/LoggerUtil";
-import EnvVariablesUtil from "../util/EnvVariablesUtil";
+import WinstonUtils from "@util/WinstonUtil";
+import LoggerUtil from "@util/LoggerUtil";
+import EnvVariablesUtil from "@util/EnvVariablesUtil";
 
 class RoutesInitializer implements Runnable {
     run(server: Application): Application {

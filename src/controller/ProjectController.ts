@@ -1,6 +1,6 @@
-import AbstractCrudController from "./AbstractCrudController";
-import Project from "../entity/Project";
-import ProjectResponseType from "../type/response/entity/ProjectResponseType";
+import AbstractCrudController from "@controller/AbstractCrudController";
+import Project from "@entity/Project";
+import ProjectResponseType from "@type/response/entity/ProjectResponseType";
 
 class ProjectController extends AbstractCrudController<
     Project,

@@ -1,6 +1,6 @@
 import { createConnection, getConnection, Connection } from "typeorm";
-import LoggerUtil from "./LoggerUtil";
-import TypeORMConfig from "../config/TypeORMConfig";
+import LoggerUtil from "@util/LoggerUtil";
+import TypeORMConfig from "@config/TypeORMConfig";
 
 /**
  * Utillity class for TypeORM

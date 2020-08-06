@@ -1,4 +1,4 @@
-import LoggerConfigFileOptions from "./LoggerConfigFileOptions";
+import LoggerConfigFileOptions from "@type/config/LoggerConfigFileOptions";
 
 /**
  * Type definition for LoggerConfigFile

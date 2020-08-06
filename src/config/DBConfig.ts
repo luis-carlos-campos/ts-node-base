@@ -1,4 +1,4 @@
-import DBConfigFile from "../type/config/DBConfigFile";
+import DBConfigFile from "@type/config/DBConfigFile";
 
 /**
  * Database options according to each environment.

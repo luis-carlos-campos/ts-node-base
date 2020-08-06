@@ -1,4 +1,4 @@
-import HttpStatusCode from "../enum/HttpStatusCode";
+import HttpStatusCode from "@enum/HttpStatusCode";
 
 class ServerError extends Error {
     constructor(readonly message: string, readonly statusCode: HttpStatusCode) {

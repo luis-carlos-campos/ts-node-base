@@ -1,4 +1,4 @@
-import DBConfigFileOptions from "./DBConfigFileOptions";
+import DBConfigFileOptions from "@type/config/DBConfigFileOptions";
 
 /**
  * Type definition for DBConfigFile

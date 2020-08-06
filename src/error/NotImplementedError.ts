@@ -1,5 +1,5 @@
-import ServerError from "./ServerError";
-import HttpStatusCode from "../enum/HttpStatusCode";
+import ServerError from "@error/ServerError";
+import HttpStatusCode from "@enum/HttpStatusCode";
 
 class NotImplementedError extends ServerError {
     constructor(readonly message: string) {

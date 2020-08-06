@@ -3,13 +3,13 @@
  */
 import { Application, Router, Request, Response, NextFunction } from "express";
 import { lstatSync, readdirSync } from "fs";
-import Runnable from "../interface/StartUpRunnable";
+import Runnable from "@interface/StartUpRunnable";
 import path from "path";
-import LoggerService from "../util/LoggerUtil";
-import ServerError from "../errors/ServerError";
-import ResponseUtil from "../util/ResponseUtil";
-import HttpStatusCode from "../enum/HttpStatusCode";
-import AbstractRoute from "../route/AbstractRoute";
+import LoggerService from "@util/LoggerUtil";
+import ServerError from "@error/ServerError";
+import ResponseUtil from "@util/ResponseUtil";
+import HttpStatusCode from "@enum/HttpStatusCode";
+import AbstractRoute from "@route/AbstractRoute";
 
 class RoutesInitializer implements Runnable {
     async run(server: Application): Promise<Application> {

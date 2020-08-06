@@ -1,4 +1,4 @@
-import LoggerConfigFile from "../type/config/LoggerConfigFile";
+import LoggerConfigFile from "@type/config/LoggerConfigFile";
 /**
  * Logger options according to each environment.
  */
