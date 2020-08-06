@@ -1,4 +1,4 @@
-import ServerConfigFileOptions from "@type/config/ServerConfigFileOptions";
+import ServerConfigFileOptions from '@type/config/ServerConfigFileOptions';
 
 /**
  * Type definition for ServerConfigFile

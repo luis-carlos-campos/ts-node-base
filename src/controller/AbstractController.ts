@@ -1,4 +1,4 @@
-import { EntityManager } from "typeorm";
+import { EntityManager } from 'typeorm';
 
 /**
  * This Controller is meant to be extended by all other controller.

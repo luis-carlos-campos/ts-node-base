@@ -1,10 +1,10 @@
-import { Request } from "express";
-import { Repository } from "typeorm";
-import EntityNotFoundError from "@error/EntityNotFoundError";
-import { validate } from "class-validator";
-import MultipleValidationError from "@error/MultipleValidationError";
-import ConfigUtil from "@util/ConfigUtil";
-import AbstractController from "@controller/AbstractController";
+import { Request } from 'express';
+import { Repository } from 'typeorm';
+import EntityNotFoundError from '@error/EntityNotFoundError';
+import { validate } from 'class-validator';
+import MultipleValidationError from '@error/MultipleValidationError';
+import ConfigUtil from '@util/ConfigUtil';
+import AbstractController from '@controller/AbstractController';
 
 abstract class CrudController<T, RT> extends AbstractController {
     // Properties that must be overwritten by Sub class.
@@ -46,15 +46,15 @@ abstract class CrudController<T, RT> extends AbstractController {
         const { sort } = req.query;
         let order: T | undefined;
         if (sort) {
-            const orderObject: { [k: string]: "DESC" | "ASC" } = {};
+            const orderObject: { [k: string]: 'DESC' | 'ASC' } = {};
             String(sort)
-                .split(",")
+                .split(',')
                 .forEach((sortCriteria) => {
-                    const isDescendingOrder = sortCriteria.startsWith("-");
+                    const isDescendingOrder = sortCriteria.startsWith('-');
                     const fieldName = isDescendingOrder
                         ? sortCriteria.substr(1, sortCriteria.length)
                         : sortCriteria;
-                    orderObject[fieldName] = isDescendingOrder ? "DESC" : "ASC";
+                    orderObject[fieldName] = isDescendingOrder ? 'DESC' : 'ASC';
                 });
             order = (orderObject as unknown) as T;
         }

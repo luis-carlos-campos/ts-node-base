@@ -1,11 +1,11 @@
-import express, { Request, Response, Router, NextFunction } from "express";
-import RouteMethod from "@type/RouteMethod";
-import { Logger } from "winston";
-import LoggerService from "@util/LoggerUtil";
-import { getConnection, EntityManager } from "typeorm";
-import NotImplementedError from "@error/NotImplementedError";
-import AbstractController from "@controller/AbstractController";
-import JsonApiResponse from "@type/response/json-api/JsonApiResponse";
+import express, { Request, Response, Router, NextFunction } from 'express';
+import RouteMethod from '@type/RouteMethod';
+import { Logger } from 'winston';
+import LoggerService from '@util/LoggerUtil';
+import { getConnection, EntityManager } from 'typeorm';
+import NotImplementedError from '@error/NotImplementedError';
+import AbstractController from '@controller/AbstractController';
+import JsonApiResponse from '@type/response/json-api/JsonApiResponse';
 
 /**
  * This Route is meant to be extended by all other routes.
@@ -14,7 +14,7 @@ import JsonApiResponse from "@type/response/json-api/JsonApiResponse";
 abstract class AbstractRoute<C extends AbstractController, RT> {
     protected abstract allowedRouteMethods: RouteMethod<C>[];
     protected controller: new (entityManager: EntityManager) => C;
-    protected logger: Logger = LoggerService.getLogger("AbstractRoute");
+    protected logger: Logger = LoggerService.getLogger('AbstractRoute');
     protected _router: Router;
 
     constructor(readonly controllerT: new (entityManager: EntityManager) => C) {
@@ -52,7 +52,7 @@ abstract class AbstractRoute<C extends AbstractController, RT> {
                         ) => RT | Promise<RT> | RT[] | Promise<RT[]>;
                         if (
                             !methodToBeCalled ||
-                            typeof methodToBeCalled !== "function"
+                            typeof methodToBeCalled !== 'function'
                         ) {
                             throw new NotImplementedError(
                                 `Method ${String(

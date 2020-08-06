@@ -1,5 +1,5 @@
-import RequestError from "@error/ServerError";
-import HttpStatusCode from "@enum/HttpStatusCode";
+import RequestError from '@error/ServerError';
+import HttpStatusCode from '@enum/HttpStatusCode';
 
 class EntityNotFoundError extends RequestError {
     constructor(readonly entityId: string) {
@@ -7,7 +7,7 @@ class EntityNotFoundError extends RequestError {
             `Could not find item with id: ${entityId}`,
             HttpStatusCode.NOT_FOUND
         );
-        this.name = "Entity Not Found";
+        this.name = 'Entity Not Found';
     }
 }
 

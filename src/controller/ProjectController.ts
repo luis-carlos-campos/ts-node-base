@@ -1,6 +1,6 @@
-import AbstractCrudController from "@controller/AbstractCrudController";
-import Project from "@entity/Project";
-import ProjectResponseType from "@type/response/entity/ProjectResponseType";
+import AbstractCrudController from '@controller/AbstractCrudController';
+import Project from '@entity/Project';
+import ProjectResponseType from '@type/response/entity/ProjectResponseType';
 
 class ProjectController extends AbstractCrudController<
     Project,
@@ -23,7 +23,7 @@ class ProjectController extends AbstractCrudController<
             teamSize,
         } = project;
         return {
-            type: "project",
+            type: 'project',
             id,
             attributes: {
                 name,

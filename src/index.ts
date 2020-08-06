@@ -1,18 +1,18 @@
-require("module-alias/register");
-import { Server } from "http";
-import ServerInitializer from "@initializer/ServerInitializer";
-import ConfigUtil from "@util/ConfigUtil";
-import LoggerUtil from "@util/LoggerUtil";
-import TypeORMUtil from "@util/TypeORMUtil";
+require('module-alias/register');
+import { Server } from 'http';
+import ServerInitializer from '@initializer/ServerInitializer';
+import ConfigUtil from '@util/ConfigUtil';
+import LoggerUtil from '@util/LoggerUtil';
+import TypeORMUtil from '@util/TypeORMUtil';
 
-const logger = LoggerUtil.getLogger("Index");
+const logger = LoggerUtil.getLogger('Index');
 
 /**
  * Configures a gracefull shutdown whenever server crashes.
  * @param server - The server that could crash.
  */
 const _configureGracefulShutdown = (server: Server) => {
-    const exitSignals = ["SIGINT", "SIGTERM", "SIGQUIT"];
+    const exitSignals = ['SIGINT', 'SIGTERM', 'SIGQUIT'];
     exitSignals.forEach((signal) => {
         process.on(signal, () => {
             logger.info(
@@ -24,12 +24,12 @@ const _configureGracefulShutdown = (server: Server) => {
                 void TypeORMUtil.closeConnection().then(() => {
                     if (serverError) {
                         logger.error(
-                            "Un unexpected error ocurred while trying to shut down...\n"
+                            'Un unexpected error ocurred while trying to shut down...\n'
                         );
                         logger.error(serverError);
                         process.exit(1);
                     } else {
-                        logger.info("Server was shut down.");
+                        logger.info('Server was shut down.');
                         process.exit(0);
                     }
                 });
@@ -40,7 +40,7 @@ const _configureGracefulShutdown = (server: Server) => {
 
 void (async (): Promise<void> => {
     try {
-        logger.info("Starting server...");
+        logger.info('Starting server...');
         const { port } = ConfigUtil.getServerConfigs();
         const app = await ServerInitializer.getServer();
         const server = app.listen(port);
@@ -48,13 +48,13 @@ void (async (): Promise<void> => {
         logger.info(`Server is ready and listening on port ${port}.`);
     } catch (error) {
         logger.error(
-            "Un unexpected error prevented the server from starting up."
+            'Un unexpected error prevented the server from starting up.'
         );
         if (error instanceof Error) {
             logger.error(error.stack);
         }
         await TypeORMUtil.closeConnection();
-        logger.info("Server was shut down.");
+        logger.info('Server was shut down.');
         process.exit(1);
     }
 })();

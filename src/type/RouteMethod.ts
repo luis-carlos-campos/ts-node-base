@@ -1,5 +1,5 @@
-import HttpMethod from "@enum/HttpMethod";
-import HttpStatusCode from "@enum/HttpStatusCode";
+import HttpMethod from '@enum/HttpMethod';
+import HttpStatusCode from '@enum/HttpStatusCode';
 
 /**
  * This type describe the relationship between a given route path and its expected method in a controller.

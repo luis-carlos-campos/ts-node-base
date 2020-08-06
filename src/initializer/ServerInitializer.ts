@@ -1,9 +1,9 @@
-import Express, { Application, json } from "express";
-import Compression from "compression";
-import DBInitializer from "@initializer/DBInitializer";
-import RoutesInitializer from "@initializer/RoutesInitializer";
-import LogInitializer from "@initializer/LogInitializer";
-import StartUpRunnable from "@interface/StartUpRunnable";
+import Express, { Application, json } from 'express';
+import Compression from 'compression';
+import DBInitializer from '@initializer/DBInitializer';
+import RoutesInitializer from '@initializer/RoutesInitializer';
+import LogInitializer from '@initializer/LogInitializer';
+import StartUpRunnable from '@interface/StartUpRunnable';
 
 // TODO: Filter
 class ServerInitializer {

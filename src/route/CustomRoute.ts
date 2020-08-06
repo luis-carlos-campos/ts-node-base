@@ -1,10 +1,10 @@
-import AbstractCrudRoute from "@route/AbstractCrudRoute";
-import Project from "@entity/Project";
-import ProjectController from "@controller/ProjectController";
-import ProjectResponseType from "@type/response/entity/ProjectResponseType";
-import CustomRouteName from "@decorator/CustomRouteNameDecorator";
+import AbstractCrudRoute from '@route/AbstractCrudRoute';
+import Project from '@entity/Project';
+import ProjectController from '@controller/ProjectController';
+import ProjectResponseType from '@type/response/entity/ProjectResponseType';
+import CustomRouteName from '@decorator/CustomRouteNameDecorator';
 
-@CustomRouteName("custom")
+@CustomRouteName('custom')
 class ProjectRoute extends AbstractCrudRoute<
     Project,
     ProjectResponseType,

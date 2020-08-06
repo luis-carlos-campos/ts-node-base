@@ -1,5 +1,5 @@
-import JsonApiSingleErrorResponse from "@type/response/json-api/JsonApiSingleErrorResponse";
-import JsonApiMultipleErrorsResponse from "@type/response/json-api/JsonApiMultipleErrorsResponse";
+import JsonApiSingleErrorResponse from '@type/response/json-api/JsonApiSingleErrorResponse';
+import JsonApiMultipleErrorsResponse from '@type/response/json-api/JsonApiMultipleErrorsResponse';
 /**
  * Custom Type for HTTP Error responses@type/response/json-api
  */

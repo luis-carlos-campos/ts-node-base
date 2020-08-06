@@ -1,4 +1,4 @@
-import ServerConfigFile from "@type/config/ServerConfigFile";
+import ServerConfigFile from '@type/config/ServerConfigFile';
 /**
  * Logger options according to each environment.
  */

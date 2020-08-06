@@ -1,5 +1,5 @@
-import ConfigUtil from "@util/ConfigUtil";
-import { ConnectionOptions } from "typeorm";
+import ConfigUtil from '@util/ConfigUtil';
+import { ConnectionOptions } from 'typeorm';
 const {
     database,
     host,
@@ -7,13 +7,13 @@ const {
     port,
     username,
 } = ConfigUtil.getDataBaseConfigs();
-import path from "path";
+import path from 'path';
 
 /**
  * TypeORM Configuration.
  */
 const TypeORMConfig: ConnectionOptions = {
-    type: "mysql",
+    type: 'mysql',
     host: process.env.DB_HOST || host,
     port: Number(process.env.DB_PORT) || port,
     username: process.env.DB_USERNAME || username,
@@ -21,10 +21,10 @@ const TypeORMConfig: ConnectionOptions = {
     database: process.env.DB_NAME || database,
     synchronize: false,
     logging: false,
-    entities: [path.resolve(__dirname, "../entity/*.*")],
-    migrations: [path.resolve(__dirname, "../migration/*.*")],
+    entities: [path.resolve(__dirname, '../entity/*.*')],
+    migrations: [path.resolve(__dirname, '../migration/*.*')],
     cli: {
-        migrationsDir: path.resolve(__dirname, "../migration"),
+        migrationsDir: path.resolve(__dirname, '../migration'),
     },
 };
 

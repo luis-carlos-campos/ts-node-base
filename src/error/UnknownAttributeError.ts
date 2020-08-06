@@ -1,5 +1,5 @@
-import RequestError from "@error/ServerError";
-import HttpStatusCode from "@enum/HttpStatusCode";
+import RequestError from '@error/ServerError';
+import HttpStatusCode from '@enum/HttpStatusCode';
 
 class UnknownAttributeError extends RequestError {
     constructor(fieldName: string) {
@@ -7,7 +7,7 @@ class UnknownAttributeError extends RequestError {
             `Attribute '${fieldName}' is not a valid field name.`,
             HttpStatusCode.BAD_REQUEST
         );
-        this.name = "Unknown attribute";
+        this.name = 'Unknown attribute';
     }
 }
 

@@ -1,4 +1,4 @@
-import { Application } from "express";
+import { Application } from 'express';
 
 /**
  * This interfaces describes something that can run on server initialization.

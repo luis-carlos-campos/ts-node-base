@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import {
     IsEmail,
     IsNotEmpty,
@@ -6,7 +6,7 @@ import {
     IsPositive,
     IsString,
     IsDate,
-} from "class-validator";
+} from 'class-validator';
 
 @Entity()
 class Project {
@@ -21,19 +21,19 @@ class Project {
     @IsString()
     name!: string;
 
-    @Column("text")
+    @Column('text')
     @IsString()
     description!: string;
 
     @Column({
-        name: "start_date",
+        name: 'start_date',
     })
     @IsNotEmpty()
     @IsDate()
     startDate!: Date;
 
     @Column({
-        name: "end_date",
+        name: 'end_date',
     })
     @IsNotEmpty()
     @IsDate()
@@ -46,7 +46,7 @@ class Project {
     @IsEmail()
     email!: string;
 
-    @Column("int")
+    @Column('int')
     @IsPositive()
     teamSize!: number;
 

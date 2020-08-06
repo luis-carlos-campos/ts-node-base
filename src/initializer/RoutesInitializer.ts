@@ -1,32 +1,32 @@
 /**
  * Load all routes from current directory into express app.
  */
-import { Application, Router, Request, Response, NextFunction } from "express";
-import { lstatSync, readdirSync } from "fs";
-import Runnable from "@interface/StartUpRunnable";
-import path from "path";
-import LoggerService from "@util/LoggerUtil";
-import ServerError from "@error/ServerError";
-import ResponseUtil from "@util/ResponseUtil";
-import HttpStatusCode from "@enum/HttpStatusCode";
-import AbstractRoute from "@route/AbstractRoute";
+import { Application, Router, Request, Response, NextFunction } from 'express';
+import { lstatSync, readdirSync } from 'fs';
+import Runnable from '@interface/StartUpRunnable';
+import path from 'path';
+import LoggerService from '@util/LoggerUtil';
+import ServerError from '@error/ServerError';
+import ResponseUtil from '@util/ResponseUtil';
+import HttpStatusCode from '@enum/HttpStatusCode';
+import AbstractRoute from '@route/AbstractRoute';
 
 class RoutesInitializer implements Runnable {
     async run(server: Application): Promise<Application> {
-        const logger = LoggerService.getLogger("RoutesInitializer");
+        const logger = LoggerService.getLogger('RoutesInitializer');
 
-        logger.debug("Initializing Routing configuration...");
+        logger.debug('Initializing Routing configuration...');
 
         const router = Router();
-        const routesFolder = path.resolve(__dirname, "../route");
+        const routesFolder = path.resolve(__dirname, '../route');
         for (const fileName of readdirSync(routesFolder)) {
             const originalFileName = fileName;
 
             // Removing .ts suffix
-            const fileWithoutSufix = fileName.split(".")[0];
+            const fileWithoutSufix = fileName.split('.')[0];
 
             // Ignore AbstractRoute
-            const ignoredRoutes = ["AbstractRoute", "AbstractCrudRoute"];
+            const ignoredRoutes = ['AbstractRoute', 'AbstractCrudRoute'];
             if (ignoredRoutes.includes(fileWithoutSufix)) {
                 logger.debug(`Skipping ${fileWithoutSufix}`);
                 continue;
@@ -51,10 +51,10 @@ class RoutesInitializer implements Runnable {
             if (routeToBeCreated instanceof AbstractRoute) {
                 const customRouteName = Reflect.get(
                     routeToBeCreated,
-                    "routeName"
+                    'routeName'
                 ) as unknown;
                 const routeName =
-                    customRouteName && typeof customRouteName === "string"
+                    customRouteName && typeof customRouteName === 'string'
                         ? customRouteName
                         : fileWithoutSufix;
 
@@ -70,7 +70,7 @@ class RoutesInitializer implements Runnable {
         }
 
         // Adding routes to express.
-        server.use("/api", router);
+        server.use('/api', router);
 
         // Error handling
         server.use(
@@ -83,10 +83,10 @@ class RoutesInitializer implements Runnable {
                 const { name, message, stack } = err;
                 if (err instanceof ServerError) {
                     statusCode = err.statusCode;
-                    logger.error("Error raised inside Server code");
+                    logger.error('Error raised inside Server code');
                     response = ResponseUtil.createErrorResponse(err);
                 } else {
-                    logger.error("Unknown Error raised inside Server code");
+                    logger.error('Unknown Error raised inside Server code');
                     response = ResponseUtil.createErrorResponse({
                         statusCode,
                         name,
@@ -107,18 +107,18 @@ class RoutesInitializer implements Runnable {
             }
         );
 
-        logger.debug("Configuring default 404 response.");
+        logger.debug('Configuring default 404 response.');
         server.use(function (req: Request, res: Response) {
             res.status(HttpStatusCode.NOT_FOUND).send([
                 ResponseUtil.createErrorResponse({
                     statusCode: HttpStatusCode.NOT_FOUND,
-                    name: "Not Found",
+                    name: 'Not Found',
                     message: `Could not find endpoint: ${req.url}`,
                 }),
             ]);
         });
 
-        logger.debug("Routing initialization was completed.");
+        logger.debug('Routing initialization was completed.');
         return server;
     }
 }

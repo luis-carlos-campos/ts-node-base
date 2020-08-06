@@ -1,10 +1,10 @@
-import { ConsoleTransportInstance } from "winston/lib/winston/transports";
-import { Format } from "logform";
-import Winston from "winston";
-import WinstonDailyRotateFile from "Winston-daily-rotate-file";
-import ConfigService from "@util/ConfigUtil";
-import EnvVariablesUtil from "@util/EnvVariablesUtil";
-import InternalServerError from "@error/InternalServerError";
+import { ConsoleTransportInstance } from 'winston/lib/winston/transports';
+import { Format } from 'logform';
+import Winston from 'winston';
+import WinstonDailyRotateFile from 'Winston-daily-rotate-file';
+import ConfigService from '@util/ConfigUtil';
+import EnvVariablesUtil from '@util/EnvVariablesUtil';
+import InternalServerError from '@error/InternalServerError';
 
 /**
  * Winston utillity class
@@ -68,11 +68,11 @@ class WinstonUtil {
             }),
             Winston.format.printf((info) => {
                 const { message, level, timestamp } = info;
-                if (timestamp && typeof timestamp === "string") {
+                if (timestamp && typeof timestamp === 'string') {
                     return `${timestamp} ${process.pid} [${module}] \t${level}: ${message}`;
                 }
                 throw new InternalServerError(
-                    "Winston did not set up timestamp."
+                    'Winston did not set up timestamp.'
                 );
             })
         );

@@ -1,5 +1,5 @@
-import JsonApiMultipleResoucesResponse from "@type/response/json-api/JsonApiMultipleResoucesResponse";
-import JsonApiSingleResouceResponse from "@type/response/json-api/JsonApiSingleResouceResponse";
+import JsonApiMultipleResoucesResponse from '@type/response/json-api/JsonApiMultipleResoucesResponse';
+import JsonApiSingleResouceResponse from '@type/response/json-api/JsonApiSingleResouceResponse';
 /**
  * Custom Type for JSON Api responses.
  */
