@@ -243,7 +243,7 @@ For running all tests:
 
 1- Clone repository
 
-    git clone https://github.pie.apple.com/venturus/ts-node-base.git
+    git clone https://github.com/luis-carlos-campos/ts-node-base.git
     cd ts-node-base
 
 2- Install dependencies
