@@ -11,7 +11,7 @@
         "style:fix": "prettier --write 'src/**/*.ts' 'test/**/*.ts'",
         "start:dev": "nodemon",
         "start:prod": "npm run build && node ./dist/index.js",
-        "test": "jest",
+        "test:unit": "jest",
         "test:functional": "NODE_ENV=test npm run db:reset && jest --projects ./test --runInBand",
         "migration:apply": "ts-node -r tsconfig-paths/register -P tsconfig.json ./node_modules/.bin/typeorm migration:run --config src/config/TypeORMConfig",
         "migration:revert": "ts-node -r tsconfig-paths/register -P tsconfig.json ./node_modules/.bin/typeorm migration:revert --config src/config/TypeORMConfig",

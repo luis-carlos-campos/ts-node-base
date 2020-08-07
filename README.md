@@ -1,5 +1,6 @@
 # Table of Contents
 - [Table of Contents](#table-of-contents)
+  - [Stack](#stack)
   - [Architecture](#architecture)
   - [Requirements](#requirements)
   - [Project Structure](#project-structure)
@@ -23,13 +24,19 @@
   - [TODO List](#todo-list)
   - [Issues/New features](#issuesnew-features)
 
-## Architecture
+## Stack
 Boilerplate setup with:
  - Express
  - Typescript
  - TypeORM
+ - Morgan/Winston (logging)
+ - Jest + Supertest (testing)
+ - MySQL Database
 
- This boilerplate is configured in a 3 tier architecture:<br />
+## Architecture
+
+ This boilerplate was designed based on the clean architecture principle.<br/>
+ Code dependencies can only come from the outer levels inward.
  ![CB Versions Dropdown](server-architecture.png)
 
 **Route** tier takes care of:
@@ -45,7 +52,7 @@ Boilerplate setup with:
 **Repository** tier takes care of:
 - Acessing database
 
-**Service** tier is meant to be used whenever a code must be used for both controller and scripts.
+**Service** tier is meant to be used whenever a code must be used for both controller and scripts or even for multiple controllers.
 
 
 ## Requirements
